@@ -347,7 +347,7 @@
 
         // Ключи из вашего проекта Firebase (glyph-games)
         const firebaseConfig = {
-            apiKey: "AIzaSyBanH7DjyOHbYwQk1mux6Q3uOt2Dkg2rWQ",
+            apiKey: "AIzaSyBanH7DjyOHbYwQk1muX6Q3uOt2Dkg2rWQ",
             authDomain: "glyph-games.firebaseapp.com",
             databaseURL: "https://glyph-games-default-rtdb.firebaseio.com",
             projectId: "glyph-games",
@@ -682,14 +682,23 @@
         function openEditProfileModal() { document.getElementById('edit-profile-modal').classList.remove('hidden'); }
         function closeEditProfileModal() { document.getElementById('edit-profile-modal').classList.add('hidden'); }
 
-        let isSignUp = false;
         function toggleAuthMode() {
-            isSignUp = !isSignUp;
-            document.getElementById('username-field').classList.toggle('hidden', !isSignUp);
-            document.getElementById('auth-title').innerText = isSignUp ? "Создать аккаунт" : "Вход в аккаунт";
-            document.getElementById('auth-submit-btn').innerText = isSignUp ? "Зарегистрироваться" : "Войти";
-            document.getElementById('auth-switch-text').innerText = isSignUp ? "Уже есть аккаунт?" : "Еще нет аккаунта?";
-            document.getElementById('auth-switch-btn').innerText = isSignUp ? "Войти" : "Зарегистрироваться";
+            isSignUpMode = !isSignUpMode;
+
+            document.getElementById('username-field')
+                .classList.toggle('hidden', !isSignUpMode);
+
+            document.getElementById('auth-title').innerText =
+                isSignUpMode ? "Создать аккаунт" : "Вход в аккаунт";
+
+            document.getElementById('auth-submit-btn').innerText =
+                isSignUpMode ? "Зарегистрироваться" : "Войти";
+
+            document.getElementById('auth-switch-text').innerText =
+                isSignUpMode ? "Уже есть аккаунт?" : "Еще нет аккаунта?";
+
+            document.getElementById('auth-switch-btn').innerText =
+                isSignUpMode ? "Войти" : "Зарегистрироваться";
         }
 
         let isSubbed = false;
