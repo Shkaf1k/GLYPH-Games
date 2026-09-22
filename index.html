@@ -427,32 +427,47 @@
         }
 
         // Авторизация / Регистрация
-        window.handleAuth = async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('auth-email').value;
-            const password = document.getElementById('auth-password').value;
-            const username = document.getElementById('auth-username').value;
+window.handleAuth = async (e) => {
+    e.preventDefault();
+    const email = document.getElementById('auth-email').value.trim();
+    const password = document.getElementById('auth-password').value;
+    const username = document.getElementById('auth-username').value.trim();
 
-            try {
-                if (isSignUpMode) {
-                    const res = await createUserWithEmailAndPassword(auth, email, password);
-                    await setDoc(doc(db, "users", res.user.uid), {
-                        username: username || email.split('@')[0],
-                        email: email,
-                        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200",
-                        banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200",
-                        createdAt: new Date()
-                    });
-                    alert("Успешная регистрация!");
-                } else {
-                    await signInWithEmailAndPassword(auth, email, password);
-                }
-                closeAuthModal();
-            } catch (err) {
-                alert("Ошибка: " + err.message);
-            }
-        };
+    if (password.length < 6) {
+        alert("Пароль должен быть не менее 6 символов!");
+        return;
+    }
 
+    try {
+        if (isSignUpMode) {
+            // Регистрация
+            const res = await createUserWithEmailAndPassword(auth, email, password);
+            await setDoc(doc(db, "users", res.user.uid), {
+                username: username || email.split('@')[0],
+                email: email,
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200",
+                banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200",
+                createdAt: new Date()
+            });
+            alert("Регистрация прошла успешно!");
+        } else {
+            // Вход
+            await signInWithEmailAndPassword(auth, email, password);
+            alert("Вы успешно вошли!");
+        }
+        closeAuthModal();
+    } catch (err) {
+        if (err.code === 'auth/invalid-credential') {
+            alert("Неверный email или пароль. Если вы у нас впервые — сначала нажмите 'Зарегистрироваться' внизу!");
+        } else if (err.code === 'auth/email-already-in-use') {
+            alert("Этот Email уже зарегистрирован! Нажмите 'Войти'.");
+        } else if (err.code === 'auth/invalid-email') {
+            alert("Введите корректный адрес электронной почты.");
+        } else {
+            alert("Ошибка: " + err.message);
+        }
+    }
+};
         // Сохранение настроек профиля
         window.handleSaveProfile = async (e) => {
             e.preventDefault();
