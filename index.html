@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLYPH // Gaming Clips Platform</title>
-    <!-- Tailwind CSS -->
+    <title>GLYPH // Gaming Video Platform</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -12,17 +11,14 @@
             theme: {
                 extend: {
                     colors: {
-                        brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
-                            accent: '#06b6d4'
-                        },
-                        darkbg: '#0b0f19',
-                        darkcard: '#111827',
-                        glass: 'rgba(17, 24, 39, 0.75)'
+                        yt: {
+                            red: '#FF0000',
+                            dark: '#0f0f0f',
+                            card: '#181818',
+                            hover: '#272727',
+                            border: '#303030',
+                            accent: '#6366f1'
+                        }
                     }
                 }
             }
@@ -31,801 +27,977 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0b0f19;
-            color: #f3f4f6;
+            font-family: 'Roboto', 'Inter', sans-serif;
+            background-color: #0f0f0f;
+            color: #f1f1f1;
             overflow-x: hidden;
         }
-        .glass-panel {
-            background: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+        /* Custom scrollbar matching YouTube style */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
         }
-        .glass-nav {
-            background: rgba(11, 15, 25, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        ::-webkit-scrollbar-track {
+            background: #0f0f0f;
         }
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(99, 102, 241, 0.4);
+        ::-webkit-scrollbar-thumb {
+            background: #374151;
             border-radius: 4px;
         }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: rgba(99, 102, 241, 0.8);
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4b5563;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        .glass-header {
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(12px);
+        }
+        /* Animated red glowing badge for live/hot tags */
+        .live-badge {
+            box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col text-gray-100 selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col bg-[#0f0f0f] text-gray-100 antialiased selection:bg-red-600 selection:text-white">
 
-    <!-- Navigation Bar -->
-    <header class="sticky top-0 z-40 glass-nav px-4 lg:px-8 py-3 transition-all duration-300">
-        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-            
-            <!-- Logo -->
-            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('feed')">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-400 p-[2px] flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                        <i data-lucide="gamepad-2" class="w-5 h-5 text-indigo-400"></i>
+    <header class="sticky top-0 z-50 glass-header border-b border-yt-border px-4 py-2.5 flex items-center justify-between gap-4 h-14">
+        <!-- Left: Sidebar Toggle & Brand Logo -->
+        <div class="flex items-center gap-4">
+            <button onclick="toggleSidebar()" class="p-2 hover:bg-yt-hover rounded-full transition-colors text-gray-200" title="Toggle Sidebar">
+                <i data-lucide="menu" class="w-5 h-5"></i>
+            </button>
+
+            <div class="flex items-center gap-2 cursor-pointer select-none" onclick="navigateTo('home')">
+                <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-red-600 via-indigo-600 to-cyan-400 p-[2px] flex items-center justify-center shadow-lg shadow-red-600/20">
+                    <div class="w-full h-full bg-black rounded-[6px] flex items-center justify-center">
+                        <i data-lucide="play" class="w-4 h-4 text-red-500 fill-red-500 ml-0.5"></i>
                     </div>
                 </div>
-                <div>
-                    <span class="font-extrabold text-xl tracking-wider bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">GLYPH</span>
-                    <span class="text-[10px] font-bold text-cyan-400 block tracking-widest -mt-1 uppercase">CLIPS</span>
-                </div>
-            </div>
-
-            <!-- Global Search Bar -->
-            <div class="flex-1 max-w-md mx-4 hidden md:block">
-                <div class="relative">
-                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="searchInput" placeholder="Search clips, games, creators..." 
-                        oninput="handleSearch(this.value)"
-                        class="w-full bg-slate-900/80 border border-slate-700/60 rounded-xl pl-10 pr-4 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
-                </div>
-            </div>
-
-            <!-- Header Action Controls -->
-            <div class="flex items-center gap-3">
-                <!-- Upload Button -->
-                <button onclick="openModal('uploadModal')" class="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium text-sm px-4 py-2 rounded-xl transition-all shadow-lg shadow-indigo-600/30 active:scale-95">
-                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                    <span class="hidden sm:inline">Upload Clip</span>
-                </button>
-
-                <!-- Navigation Tabs -->
-                <nav class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800">
-                    <button id="nav-feed" onclick="switchTab('feed')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-white bg-indigo-600 shadow">
-                        <i data-lucide="compass" class="w-4 h-4"></i>
-                        <span class="hidden sm:inline">Discover</span>
-                    </button>
-                    <button id="nav-profile" onclick="switchTab('profile')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white">
-                        <i data-lucide="user" class="w-4 h-4"></i>
-                        <span class="hidden sm:inline">Profile</span>
-                    </button>
-                </nav>
-
-                <!-- Profile / Auth Button -->
-                <div id="authButtonContainer">
-                    <button onclick="openModal('authModal')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm font-medium px-3.5 py-2 rounded-xl transition-all">
-                        <i data-lucide="log-in" class="w-4 h-4 text-indigo-400"></i>
-                        <span class="hidden md:inline">Sign In</span>
-                    </button>
+                <div class="flex items-baseline gap-1">
+                    <span class="font-black text-xl tracking-tight bg-gradient-to-r from-white via-gray-200 to-red-500 bg-clip-text text-transparent">GLYPH</span>
+                    <span class="text-[10px] font-bold text-red-500 tracking-wider uppercase">Gaming</span>
                 </div>
             </div>
         </div>
 
-        <!-- Mobile Search Input -->
-        <div class="mt-3 md:hidden">
-            <div class="relative">
-                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                <input type="text" placeholder="Search clips, games..." 
+        <!-- Center: Search Bar & Voice Input Placeholder -->
+        <div class="flex-1 max-w-2xl mx-4 hidden md:flex items-center gap-3">
+            <div class="flex flex-1 items-center bg-[#121212] border border-yt-border rounded-full overflow-hidden focus-within:border-indigo-500 transition-colors">
+                <input type="text" id="searchInput" placeholder="Search gaming clips, creators, esports..." 
                     oninput="handleSearch(this.value)"
-                    class="w-full bg-slate-900/80 border border-slate-700/60 rounded-xl pl-10 pr-4 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500">
+                    class="w-full bg-transparent px-4 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none">
+                <button onclick="triggerSearch()" class="px-5 py-2.5 bg-yt-card hover:bg-yt-hover border-l border-yt-border text-gray-300 hover:text-white transition-colors" title="Search">
+                    <i data-lucide="search" class="w-4 h-4"></i>
+                </button>
             </div>
+            <button onclick="simulateVoiceSearch()" class="p-2.5 bg-yt-card hover:bg-yt-hover border border-yt-border rounded-full text-gray-300 hover:text-white transition-colors" title="Search with voice">
+                <i data-lucide="mic" class="w-4 h-4"></i>
+            </button>
+        </div>
+
+        <!-- Right: Action Controls & User Avatar -->
+        <div class="flex items-center gap-2 sm:gap-3">
+            <!-- Upload Video Button -->
+            <button onclick="openModal('uploadModal')" class="flex items-center gap-2 bg-yt-card hover:bg-yt-hover border border-yt-border text-sm font-medium px-3.5 py-1.5 rounded-full transition-all text-gray-200 active:scale-95">
+                <i data-lucide="plus" class="w-4 h-4 text-red-500"></i>
+                <span class="hidden sm:inline">Create</span>
+            </button>
+
+            <!-- Notifications Bell -->
+            <div class="relative">
+                <button onclick="toggleNotifications()" class="p-2 hover:bg-yt-hover rounded-full transition-colors text-gray-300 hover:text-white relative" title="Notifications">
+                    <i data-lucide="bell" class="w-5 h-5"></i>
+                    <span id="notifBadge" class="absolute top-1 right-1 w-2 h-2 bg-red-600 rounded-full ring-2 ring-black"></span>
+                </button>
+                <!-- Notification Dropdown -->
+                <div id="notifMenu" class="hidden absolute right-0 mt-2 w-80 bg-yt-card border border-yt-border rounded-2xl shadow-2xl p-4 z-50 space-y-3">
+                    <div class="flex items-center justify-between border-b border-yt-border pb-2">
+                        <span class="font-bold text-sm text-white">Notifications</span>
+                        <span class="text-xs text-indigo-400 cursor-pointer hover:underline" onclick="this.parentElement.parentElement.classList.add('hidden')">Mark as read</span>
+                    </div>
+                    <div class="space-y-3 text-xs">
+                        <div class="flex items-start gap-3 p-1.5 hover:bg-yt-hover rounded-lg cursor-pointer" onclick="navigateTo('watch', 'clip_1')">
+                            <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=80&q=80" class="w-8 h-8 rounded-full object-cover">
+                            <div>
+                                <p class="text-gray-200"><strong class="text-white">ViperSniper</strong> uploaded a new clutch montage!</p>
+                                <span class="text-[10px] text-gray-400">10 mins ago</span>
+                            </div>
+                        </div>
+                        <div class="flex items-start gap-3 p-1.5 hover:bg-yt-hover rounded-lg cursor-pointer" onclick="navigateTo('watch', 'clip_3')">
+                            <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80" class="w-8 h-8 rounded-full object-cover">
+                            <div>
+                                <p class="text-gray-200"><strong class="text-white">RadiantGamer</strong> is now LIVE with Valorant Ranked!</p>
+                                <span class="text-[10px] text-gray-400">1 hour ago</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile / Channel Avatar Link -->
+            <button onclick="navigateTo('channel')" class="flex items-center gap-2 p-0.5 hover:ring-2 ring-red-500 rounded-full transition-all" title="Your Channel">
+                <img id="headerUserAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80" alt="Channel Avatar" class="w-8 h-8 rounded-full object-cover">
+            </button>
         </div>
     </header>
 
-    <!-- Main Content Area -->
-    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8">
-        
-        <!-- ================= FEED VIEW ================= -->
-        <section id="feedView" class="space-y-6">
-            
-            <!-- Category Chips Carousel -->
-            <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
-                <button onclick="filterByCategory('All')" class="category-btn active border px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all bg-indigo-600 border-indigo-500 text-white">
-                    ✨ All Clips
+    <!-- App Body Container with Collapsible Sidebar -->
+    <div class="flex flex-1 overflow-hidden relative">
+
+        <aside id="mainSidebar" class="w-64 bg-[#0f0f0f] border-r border-yt-border flex flex-col shrink-0 transition-all duration-300 z-40 overflow-y-auto">
+            <div class="p-2 space-y-1">
+                <!-- Primary Nav -->
+                <button onclick="navigateTo('home')" id="snav-home" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors bg-yt-hover text-white">
+                    <i data-lucide="home" class="w-5 h-5 text-red-500"></i>
+                    <span class="sidebar-text">Home</span>
                 </button>
-                <button onclick="filterByCategory('Minecraft')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
-                    ⛏️ Minecraft
+                <button onclick="navigateTo('shorts')" id="snav-shorts" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <i data-lucide="zap" class="w-5 h-5 text-indigo-400"></i>
+                    <span class="sidebar-text">Shorts & Clips</span>
                 </button>
-                <button onclick="filterByCategory('CS2')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
-                    🎯 CS2
+                <button onclick="navigateTo('home')" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <i data-lucide="tv-2" class="w-5 h-5 text-gray-400"></i>
+                    <span class="sidebar-text">Subscriptions</span>
                 </button>
-                <button onclick="filterByCategory('Dota 2')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
-                    ⚔️ Dota 2
+
+                <hr class="border-yt-border my-2">
+
+                <!-- Library Section -->
+                <div class="px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-500 sidebar-text">You</div>
+                <button onclick="navigateTo('channel')" id="snav-channel" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <i data-lucide="user-square-2" class="w-5 h-5 text-gray-400"></i>
+                    <span class="sidebar-text">Your Channel</span>
                 </button>
-                <button onclick="filterByCategory('GTA V')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
-                    🚗 GTA V
+                <button onclick="filterBySection('history')" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <i data-lucide="history" class="w-5 h-5 text-gray-400"></i>
+                    <span class="sidebar-text">History</span>
                 </button>
-                <button onclick="filterByCategory('Valorant')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
-                    🔥 Valorant
+                <button onclick="filterBySection('liked')" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <i data-lucide="thumbs-up" class="w-5 h-5 text-gray-400"></i>
+                    <span class="sidebar-text">Liked Videos</span>
                 </button>
-                <button onclick="filterByCategory('Cyberpunk 2077')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
-                    🤖 Cyberpunk 2077
+
+                <hr class="border-yt-border my-2">
+
+                <!-- Trending Gaming Topics -->
+                <div class="px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-500 sidebar-text">Explore Gaming</div>
+                <button onclick="filterByCategory('Valorant')" class="sidebar-item flex items-center gap-4 w-full px-4 py-2 rounded-xl text-sm text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-red-500"></span>
+                    <span class="sidebar-text">Valorant</span>
+                </button>
+                <button onclick="filterByCategory('CS2')" class="sidebar-item flex items-center gap-4 w-full px-4 py-2 rounded-xl text-sm text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                    <span class="sidebar-text">CS2</span>
+                </button>
+                <button onclick="filterByCategory('Minecraft')" class="sidebar-item flex items-center gap-4 w-full px-4 py-2 rounded-xl text-sm text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span class="sidebar-text">Minecraft</span>
+                </button>
+                <button onclick="filterByCategory('GTA V')" class="sidebar-item flex items-center gap-4 w-full px-4 py-2 rounded-xl text-sm text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-purple-500"></span>
+                    <span class="sidebar-text">GTA V</span>
+                </button>
+                <button onclick="filterByCategory('Cyberpunk 2077')" class="sidebar-item flex items-center gap-4 w-full px-4 py-2 rounded-xl text-sm text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
+                    <span class="sidebar-text">Cyberpunk 2077</span>
                 </button>
             </div>
+        </aside>
 
-            <!-- Clips Grid -->
-            <div id="clipsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Video Cards Rendered Dynamically -->
-            </div>
+        <!-- Main Dynamic Content Region -->
+        <main class="flex-1 overflow-y-auto bg-[#0f0f0f] custom-scrollbar">
 
-            <!-- Empty Feed State -->
-            <div id="emptyFeed" class="hidden text-center py-20 glass-panel rounded-3xl p-8">
-                <i data-lucide="video-off" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
-                <h3 class="text-xl font-bold text-gray-300">No clips found</h3>
-                <p class="text-gray-500 text-sm mt-1 max-w-sm mx-auto">Try adjusting your search query or select another game category!</p>
-            </div>
-        </section>
-
-        <!-- ================= PROFILE VIEW ================= -->
-        <section id="profileView" class="hidden space-y-8">
-            <!-- Profile Header Card -->
-            <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl relative">
-                <!-- Banner -->
-                <div class="h-48 md:h-64 w-full relative overflow-hidden bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-900">
-                    <img id="profileBanner" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80" alt="Banner" class="w-full h-full object-cover opacity-60">
-                    <div class="absolute inset-0 bg-gradient-to-t from-darkbg via-transparent to-transparent"></div>
+            <section id="viewHome" class="p-4 sm:p-6 space-y-6">
+                <!-- Category Pills Horizontal Scroll -->
+                <div class="flex items-center gap-2.5 overflow-x-auto pb-2 hide-scrollbar">
+                    <button onclick="filterByCategory('All')" class="cat-pill active px-4 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all bg-white text-black">
+                        All
+                    </button>
+                    <button onclick="filterByCategory('Valorant')" class="cat-pill px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-yt-card hover:bg-yt-hover text-gray-200">
+                        Valorant
+                    </button>
+                    <button onclick="filterByCategory('CS2')" class="cat-pill px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-yt-card hover:bg-yt-hover text-gray-200">
+                        CS2
+                    </button>
+                    <button onclick="filterByCategory('Minecraft')" class="cat-pill px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-yt-card hover:bg-yt-hover text-gray-200">
+                        Minecraft
+                    </button>
+                    <button onclick="filterByCategory('GTA V')" class="cat-pill px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-yt-card hover:bg-yt-hover text-gray-200">
+                        GTA V
+                    </button>
+                    <button onclick="filterByCategory('Cyberpunk 2077')" class="cat-pill px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-yt-card hover:bg-yt-hover text-gray-200">
+                        Cyberpunk 2077
+                    </button>
+                    <button onclick="filterByCategory('Live')" class="cat-pill px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-yt-card hover:bg-yt-hover text-gray-200 flex items-center gap-1.5">
+                        <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span> Live Streams
+                    </button>
                 </div>
 
-                <!-- User Details Container -->
-                <div class="px-6 pb-6 pt-0 relative -mt-16 flex flex-col md:flex-row items-center md:items-end justify-between gap-6">
-                    <div class="flex flex-col md:flex-row items-center md:items-end gap-5 text-center md:text-left">
-                        <!-- Avatar -->
-                        <div class="relative">
-                            <img id="profileAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" alt="Avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-2xl object-cover ring-4 ring-darkbg shadow-2xl">
-                            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-2 border-darkbg rounded-full flex items-center justify-center title='Online'"></div>
+                <!-- Video Grid -->
+                <div id="homeVideoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 gap-y-8">
+                    <!-- Dynamic Video Cards Rendered Here -->
+                </div>
+
+                <!-- Empty State -->
+                <div id="emptyHomeState" class="hidden text-center py-20 bg-yt-card/50 rounded-3xl p-8 border border-yt-border">
+                    <i data-lucide="video-off" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
+                    <h3 class="text-lg font-bold text-gray-200">No videos match your filter</h3>
+                    <p class="text-gray-500 text-sm mt-1">Try selecting another gaming category or clearing your search query.</p>
+                </div>
+            </section>
+
+            <section id="viewWatch" class="hidden p-4 sm:p-6">
+                <div class="max-w-[1700px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <!-- Main Video Player & Details Column (2 Cols wide on desktop) -->
+                    <div class="lg:col-span-2 space-y-4">
+                        <!-- HTML5 Video Player Box -->
+                        <div class="relative bg-black rounded-2xl overflow-hidden aspect-video shadow-2xl border border-yt-border group">
+                            <video id="mainVideoPlayer" class="w-full h-full object-contain" controls autoplay preload="metadata">
+                                <source id="mainVideoSource" src="" type="video/mp4">
+                                Your browser does not support video play.
+                            </video>
                         </div>
 
-                        <!-- Text Details -->
-                        <div class="space-y-1">
-                            <h2 id="profileUsername" class="text-2xl md:text-3xl font-extrabold text-white">Guest User</h2>
-                            <p id="profileHandle" class="text-indigo-400 text-sm font-medium">@guest_player</p>
-                            <p id="profileBio" class="text-gray-400 text-sm max-w-md pt-1">Gaming enthusiast. Sharing the best highlights & Clutch moments!</p>
+                        <!-- Video Title -->
+                        <h1 id="watchTitle" class="text-xl sm:text-2xl font-bold text-white tracking-tight">Video Title</h1>
+
+                        <!-- Creator Bar & Primary Actions -->
+                        <div class="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-yt-border">
+                            <!-- Left: Channel Info & Subscribe -->
+                            <div class="flex items-center gap-4">
+                                <img id="watchAuthorAvatar" src="" class="w-11 h-11 rounded-full object-cover cursor-pointer" onclick="navigateTo('channel')">
+                                <div>
+                                    <div class="flex items-center gap-1 cursor-pointer" onclick="navigateTo('channel')">
+                                        <h3 id="watchAuthorName" class="font-bold text-base text-white hover:text-gray-200">Creator</h3>
+                                        <i data-lucide="check-circle-2" class="w-4 h-4 text-indigo-400 fill-indigo-400/20"></i>
+                                    </div>
+                                    <span id="watchSubCount" class="text-xs text-gray-400">1.2M subscribers</span>
+                                </div>
+                                <button id="watchSubscribeBtn" onclick="toggleSubscribe()" class="ml-2 bg-white text-black hover:bg-gray-200 text-sm font-bold px-4 py-2 rounded-full transition-all active:scale-95">
+                                    Subscribe
+                                </button>
+                            </div>
+
+                            <!-- Right: Likes, Share, Save Controls -->
+                            <div class="flex items-center gap-2 overflow-x-auto">
+                                <!-- Like / Dislike pill -->
+                                <div class="flex items-center bg-yt-card rounded-full border border-yt-border overflow-hidden">
+                                    <button onclick="toggleWatchLike()" id="watchLikeBtn" class="flex items-center gap-2 px-4 py-2 hover:bg-yt-hover text-sm font-medium text-gray-200 transition-colors">
+                                        <i data-lucide="thumbs-up" id="watchLikeIcon" class="w-4 h-4"></i>
+                                        <span id="watchLikeCount">0</span>
+                                    </button>
+                                    <div class="h-5 w-[1px] bg-yt-border"></div>
+                                    <button onclick="toggleWatchDislike()" id="watchDislikeBtn" class="px-3 py-2 hover:bg-yt-hover text-sm font-medium text-gray-200 transition-colors">
+                                        <i data-lucide="thumbs-down" id="watchDislikeIcon" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+
+                                <button onclick="openShareModal()" class="flex items-center gap-2 bg-yt-card hover:bg-yt-hover border border-yt-border px-4 py-2 rounded-full text-sm font-medium text-gray-200 transition-colors">
+                                    <i data-lucide="share-2" class="w-4 h-4"></i>
+                                    <span>Share</span>
+                                </button>
+
+                                <button onclick="toggleWatchSave()" id="watchSaveBtn" class="flex items-center gap-2 bg-yt-card hover:bg-yt-hover border border-yt-border px-4 py-2 rounded-full text-sm font-medium text-gray-200 transition-colors">
+                                    <i data-lucide="bookmark" id="watchSaveIcon" class="w-4 h-4"></i>
+                                    <span>Save</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Expandable Description Box -->
+                        <div class="bg-yt-card hover:bg-yt-card/80 p-4 rounded-2xl border border-yt-border text-sm space-y-2 cursor-pointer transition-colors" onclick="this.classList.toggle('line-clamp-none')">
+                            <div class="flex items-center gap-3 text-xs font-bold text-gray-300">
+                                <span id="watchViewCount">0 views</span>
+                                <span id="watchUploadDate">Recently uploaded</span>
+                                <span class="text-indigo-400">#GLYPH #Gaming #ClutchHighlights</span>
+                            </div>
+                            <p id="watchDescription" class="text-gray-300 leading-relaxed whitespace-pre-line">
+                                Video description goes here...
+                            </p>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="space-y-6 pt-4">
+                            <div class="flex items-center gap-6">
+                                <h3 class="font-bold text-lg text-white"><span id="commentCountHeader">3</span> Comments</h3>
+                                <button class="flex items-center gap-2 text-xs font-semibold text-gray-400 hover:text-white">
+                                    <i data-lucide="arrow-down-up" class="w-4 h-4"></i>
+                                    Sort by
+                                </button>
+                            </div>
+
+                            <!-- Comment Input Form -->
+                            <div class="flex items-start gap-3">
+                                <img id="commentInputAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80" class="w-10 h-10 rounded-full object-cover">
+                                <div class="flex-1 space-y-2">
+                                    <input type="text" id="newCommentInput" placeholder="Add a comment..." class="w-full bg-transparent border-b border-yt-border focus:border-white text-sm py-1.5 focus:outline-none transition-colors text-gray-100">
+                                    <div class="flex justify-end gap-2">
+                                        <button onclick="document.getElementById('newCommentInput').value=''" class="px-3 py-1.5 hover:bg-yt-hover text-xs font-medium text-gray-300 rounded-full">Cancel</button>
+                                        <button onclick="postComment()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-full transition-all shadow-md">Comment</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Active Comments List -->
+                            <div id="commentsList" class="space-y-4">
+                                <!-- Dynamic Comments Rendered Here -->
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Profile Controls -->
-                    <div class="flex items-center gap-3">
-                        <button id="editProfileBtn" onclick="openModal('editProfileModal')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all">
-                            <i data-lucide="edit-3" class="w-4 h-4"></i>
-                            Edit Profile
-                        </button>
-                        <button id="followBtn" onclick="toggleFollow()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
-                            <i data-lucide="user-plus" class="w-4 h-4"></i>
-                            <span id="followBtnText">Follow</span>
-                        </button>
+                    <!-- Right Sidebar: Up Next / Recommended Videos -->
+                    <div class="space-y-4">
+                        <div class="flex items-center justify-between">
+                            <h3 class="font-bold text-base text-white">Up Next</h3>
+                            <label class="flex items-center gap-2 text-xs text-gray-400 cursor-pointer">
+                                <span>Autoplay</span>
+                                <input type="checkbox" checked class="accent-red-600 rounded">
+                            </label>
+                        </div>
+
+                        <!-- Up Next List Container -->
+                        <div id="upNextList" class="space-y-3">
+                            <!-- Dynamic Up Next Cards -->
+                        </div>
                     </div>
                 </div>
+            </section>
 
-                <!-- Stats Bar -->
-                <div class="border-t border-slate-800/80 px-6 py-4 grid grid-cols-3 divide-x divide-slate-800 text-center">
-                    <div>
-                        <span id="statClips" class="block text-xl font-extrabold text-white">0</span>
-                        <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Clips</span>
+            <section id="viewChannel" class="hidden space-y-6 pb-12">
+                <!-- Channel Banner -->
+                <div class="h-44 sm:h-60 md:h-72 w-full relative overflow-hidden bg-gradient-to-r from-red-900 via-indigo-950 to-slate-900">
+                    <img id="channelBannerImg" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80" class="w-full h-full object-cover opacity-60">
+                    <div class="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent"></div>
+                </div>
+
+                <!-- Channel Profile Header -->
+                <div class="max-w-7xl mx-auto px-4 sm:px-6">
+                    <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 -mt-12 sm:-mt-16 relative z-10">
+                        <div class="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
+                            <img id="channelAvatarImg" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" class="w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover ring-4 ring-[#0f0f0f] shadow-2xl">
+                            <div class="space-y-1.5 pt-2">
+                                <div class="flex items-center justify-center md:justify-start gap-2">
+                                    <h1 id="channelDisplayName" class="text-2xl sm:text-3xl font-black text-white">GLYPH Official Pro</h1>
+                                    <i data-lucide="check-circle-2" class="w-6 h-6 text-red-500 fill-red-500/20" title="Verified Creator"></i>
+                                </div>
+                                <p class="text-sm font-medium text-gray-400">@glyph_pro • <span id="channelSubscribers">1.2M subscribers</span> • <span id="channelVideoCount">14 videos</span></p>
+                                <p id="channelBio" class="text-xs sm:text-sm text-gray-300 max-w-xl">Home of competitive gaming highlights, Radiant Valorant plays, speedruns & high-FPS montages!</p>
+                            </div>
+                        </div>
+
+                        <!-- Channel Action Buttons -->
+                        <div class="flex items-center gap-3">
+                            <button onclick="openModal('editProfileModal')" class="bg-yt-card hover:bg-yt-hover border border-yt-border text-xs sm:text-sm font-bold px-4 py-2.5 rounded-full transition-all">
+                                Customize Channel
+                            </button>
+                            <button id="channelSubscribeBtn" onclick="toggleSubscribe()" class="bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-bold px-6 py-2.5 rounded-full shadow-lg shadow-red-600/30 transition-all">
+                                Subscribe
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <span id="statLikes" class="block text-xl font-extrabold text-indigo-400">0</span>
-                        <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Total Likes</span>
+
+                    <!-- Channel Navigation Tabs -->
+                    <div class="flex items-center gap-8 border-b border-yt-border mt-8 overflow-x-auto hide-scrollbar text-sm font-bold text-gray-400">
+                        <button onclick="switchChannelTab('home')" id="ctab-home" class="channel-tab-btn pb-3 text-white border-b-2 border-red-500 whitespace-nowrap">Home</button>
+                        <button onclick="switchChannelTab('videos')" id="ctab-videos" class="channel-tab-btn pb-3 hover:text-white whitespace-nowrap">Videos</button>
+                        <button onclick="switchChannelTab('playlists')" id="ctab-playlists" class="channel-tab-btn pb-3 hover:text-white whitespace-nowrap">Playlists</button>
+                        <button onclick="switchChannelTab('community')" id="ctab-community" class="channel-tab-btn pb-3 hover:text-white whitespace-nowrap">Community</button>
+                        <button onclick="switchChannelTab('about')" id="ctab-about" class="channel-tab-btn pb-3 hover:text-white whitespace-nowrap">About</button>
                     </div>
-                    <div>
-                        <span id="statFollowers" class="block text-xl font-extrabold text-cyan-400">128</span>
-                        <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Followers</span>
+
+                    <!-- Channel Tab Content Views -->
+                    <div id="channelTabContent" class="pt-6">
+                        <!-- Content rendered dynamically via switchChannelTab -->
                     </div>
                 </div>
-            </div>
+            </section>
 
-            <!-- Profile Clips Tab Section -->
-            <div>
-                <div class="flex items-center justify-between mb-6">
-                    <h3 class="text-xl font-bold flex items-center gap-2 text-white">
-                        <i data-lucide="film" class="w-5 h-5 text-indigo-400"></i>
-                        Uploaded Clips
-                    </h3>
-                </div>
-                <div id="profileClipsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- User's Video Cards -->
-                </div>
-                <div id="emptyProfileClips" class="hidden text-center py-16 glass-panel rounded-3xl p-8">
-                    <i data-lucide="clapperboard" class="w-12 h-12 text-gray-600 mx-auto mb-3"></i>
-                    <p class="text-gray-400 font-medium">You haven't uploaded any clips yet.</p>
-                    <button onclick="openModal('uploadModal')" class="mt-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-xl transition-all">Upload Your First Clip</button>
-                </div>
-            </div>
-        </section>
-    </main>
+            <section id="viewShorts" class="hidden p-4 flex justify-center min-h-[85vh]">
+                <div class="w-full max-w-sm bg-black rounded-3xl overflow-hidden border border-yt-border shadow-2xl relative flex flex-col justify-between">
+                    <video id="shortsPlayer" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" class="w-full h-full object-cover" autoplay loop muted></video>
+                    
+                    <!-- Overlay Overlay Controls -->
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 p-4 flex flex-col justify-between pointer-events-none">
+                        <div class="flex justify-between items-center text-white pointer-events-auto">
+                            <span class="text-xs font-bold bg-red-600 px-2.5 py-1 rounded-md uppercase tracking-wider">Shorts</span>
+                            <button onclick="toggleShortsMute()" class="p-2 bg-black/40 rounded-full hover:bg-black/60">
+                                <i data-lucide="volume-2" id="shortsMuteIcon" class="w-5 h-5"></i>
+                            </button>
+                        </div>
 
-    <!-- ================= MODALS ================= -->
+                        <div class="space-y-3 pointer-events-auto">
+                            <div class="flex items-center gap-3">
+                                <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=120&q=80" class="w-10 h-10 rounded-full ring-2 ring-red-500">
+                                <div>
+                                    <p class="font-bold text-sm text-white">@ViperSniper</p>
+                                    <p class="text-xs text-gray-300">1v5 AWP Noscope Fast Flick!</p>
+                                </div>
+                            </div>
 
+                            <div class="flex justify-between items-center pt-2 border-t border-white/20">
+                                <button onclick="nextShort()" class="w-full py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold text-xs backdrop-blur-md">
+                                    Next Short Clip ➔
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    
     <!-- Upload Clip Modal -->
     <div id="uploadModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-700/60">
-            <button onclick="closeModal('uploadModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-all">
+        <div class="bg-yt-card w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-yt-border">
+            <button onclick="closeModal('uploadModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-yt-hover">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
             <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-2xl">
+                <div class="p-2.5 bg-red-600/20 text-red-500 rounded-2xl">
                     <i data-lucide="upload-cloud" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold text-white">Upload Game Clip</h3>
-                    <p class="text-xs text-gray-400">Share your epic gaming highlight with the community</p>
+                    <h3 class="text-xl font-bold text-white">Upload Gaming Video</h3>
+                    <p class="text-xs text-gray-400">Share your gameplay, clutches, or speedrun clips with GLYPH</p>
                 </div>
             </div>
 
-            <form id="uploadForm" onsubmit="handleUpload(event)" class="space-y-4">
+            <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Clip Title</label>
-                    <input type="text" id="clipTitleInput" required placeholder="e.g., Insane 1v5 Ace Clutch!" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Title</label>
+                    <input type="text" id="uploadTitle" required placeholder="e.g., Epic 1v4 Ace Clutch in Valorant" class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-red-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Game Category</label>
-                    <select id="clipCategoryInput" required class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
-                        <option value="Minecraft">Minecraft</option>
-                        <option value="CS2">CS2</option>
-                        <option value="Dota 2">Dota 2</option>
-                        <option value="GTA V">GTA V</option>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Game Tag</label>
+                    <select id="uploadCategory" required class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-red-500">
                         <option value="Valorant">Valorant</option>
+                        <option value="CS2">CS2</option>
+                        <option value="Minecraft">Minecraft</option>
+                        <option value="GTA V">GTA V</option>
                         <option value="Cyberpunk 2077">Cyberpunk 2077</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Select Video File</label>
-                    <input type="file" id="clipFileInput" accept="video/*" required class="w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer bg-slate-900 rounded-xl border border-slate-700/80">
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Description</label>
+                    <textarea id="uploadDescription" rows="3" placeholder="Tell viewers about your clip..." class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-red-500"></textarea>
                 </div>
 
-                <div id="uploadProgressContainer" class="hidden space-y-1 pt-2">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Video File / URL Sample</label>
+                    <input type="file" id="uploadFile" accept="video/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-500 cursor-pointer bg-[#0f0f0f] rounded-xl border border-yt-border">
+                </div>
+
+                <!-- Live Upload Progress -->
+                <div id="uploadProgressBox" class="hidden space-y-1.5 pt-2">
                     <div class="flex justify-between text-xs text-gray-400">
-                        <span>Uploading clip...</span>
+                        <span>Uploading & Processing HD Clip...</span>
                         <span id="uploadPercent">0%</span>
                     </div>
-                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-                        <div id="uploadProgressBar" class="bg-indigo-500 h-full w-0 transition-all duration-300"></div>
+                    <div class="w-full bg-yt-border rounded-full h-2 overflow-hidden">
+                        <div id="uploadBar" class="bg-red-600 h-full w-0 transition-all duration-300"></div>
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" onclick="closeModal('uploadModal')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-medium text-gray-300">Cancel</button>
-                    <button type="submit" id="uploadSubmitBtn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30">Publish Clip</button>
+                <div class="flex justify-end gap-3 pt-4 border-t border-yt-border">
+                    <button type="button" onclick="closeModal('uploadModal')" class="px-5 py-2.5 bg-yt-hover rounded-xl text-xs font-bold text-gray-300">Cancel</button>
+                    <button type="submit" class="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-red-600/30">Publish Video</button>
                 </div>
             </form>
-        </div>
-    </div>
-
-    <!-- Auth Modal -->
-    <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-700/60">
-            <button onclick="closeModal('authModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-all">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <div class="text-center">
-                <div class="w-12 h-12 bg-indigo-600/20 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                    <i data-lucide="user-check" class="w-6 h-6"></i>
-                </div>
-                <h3 id="authTitle" class="text-2xl font-bold text-white">Welcome Back</h3>
-                <p id="authSubtitle" class="text-xs text-gray-400 mt-1">Sign in to publish clips and interact with players</p>
-            </div>
-
-            <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
-                <div id="authUsernameField" class="hidden">
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Username</label>
-                    <input type="text" id="authUsernameInput" placeholder="Gamertag" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Email Address</label>
-                    <input type="email" id="authEmailInput" required placeholder="player@glyph.com" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Password</label>
-                    <input type="password" id="authPasswordInput" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
-                </div>
-
-                <button type="submit" id="authSubmitBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30 transition-all">Sign In</button>
-            </form>
-
-            <div class="text-center pt-2">
-                <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs text-indigo-400 hover:underline">Don't have an account? Register</button>
-            </div>
         </div>
     </div>
 
     <!-- Edit Profile Modal -->
     <div id="editProfileModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-700/60">
-            <button onclick="closeModal('editProfileModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-all">
+        <div class="bg-yt-card w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-yt-border">
+            <button onclick="closeModal('editProfileModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-yt-hover">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-2xl">
-                    <i data-lucide="user-cog" class="w-6 h-6"></i>
+            <h3 class="text-xl font-bold text-white">Customize Channel</h3>
+            <form onsubmit="handleChannelUpdate(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Channel Name</label>
+                    <input type="text" id="editChannelName" required class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100">
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold text-white">Edit Profile</h3>
-                    <p class="text-xs text-gray-400">Update your public avatar, banner, and handle</p>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Channel Bio</label>
+                    <textarea id="editChannelBio" rows="3" class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100"></textarea>
                 </div>
-            </div>
-
-            <form id="editProfileForm" onsubmit="handleProfileUpdate(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Display Name</label>
-                    <input type="text" id="editUsernameInput" required class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Avatar Image URL</label>
-                    <input type="url" id="editAvatarInput" required class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Banner Image URL</label>
-                    <input type="url" id="editBannerInput" required class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
-                </div>
-
                 <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" onclick="closeModal('editProfileModal')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-medium text-gray-300">Cancel</button>
-                    <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30">Save Changes</button>
+                    <button type="button" onclick="closeModal('editProfileModal')" class="px-4 py-2 bg-yt-hover rounded-xl text-xs font-bold">Cancel</button>
+                    <button type="submit" class="px-5 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Script Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    <!-- Share Modal -->
+    <div id="shareModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-yt-card w-full max-w-sm rounded-3xl p-6 space-y-4 shadow-2xl relative border border-yt-border text-center">
+            <button onclick="closeModal('shareModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="text-lg font-bold text-white">Share Video</h3>
+            <div class="flex items-center bg-[#0f0f0f] border border-yt-border rounded-xl p-2 gap-2">
+                <input type="text" id="shareUrlInput" readonly value="https://glyph.tv/watch?v=clip_1" class="w-full bg-transparent text-xs text-gray-300 focus:outline-none">
+                <button onclick="copyShareUrl()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold">Copy</button>
+            </div>
+        </div>
+    </div>
 
-        // Global State & Storage
-        window.appState = {
-            currentUser: null,
-            activeTab: 'feed',
+    <script>
+        // Central Data Store
+        const appData = {
+            activeView: 'home',
             activeCategory: 'All',
-            searchQuery: '',
-            isFollowing: false,
-            isAuthRegisterMode: false,
-            clips: [
+            activeVideoId: 'clip_1',
+            sidebarCollapsed: false,
+            userChannel: {
+                name: 'GLYPH Official Pro',
+                handle: '@glyph_pro',
+                subscribers: '1.2M subscribers',
+                videosCount: 14,
+                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80',
+                banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80',
+                bio: 'Home of competitive gaming highlights, Radiant Valorant plays, speedruns & high-FPS montages!'
+            },
+            videos: [
                 {
                     id: 'clip_1',
-                    title: 'Insane 1v4 AWP Clutch Defense!',
+                    title: 'Insane 1v4 AWP Clutch Defense in CS2 Major!',
                     category: 'CS2',
                     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                    thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
                     author: 'ViperSniper',
                     authorAvatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=150&q=80',
-                    authorId: 'user_1',
-                    likes: 142,
-                    views: 1280,
+                    views: '142K views',
+                    viewsCount: 142000,
+                    uploadDate: '3 hours ago',
+                    likes: 12400,
                     liked: false,
                     saved: false,
-                    createdAt: Date.now() - 3600000 * 5
+                    description: 'Check out this insane 1v4 AWP clutch during the final overtime round on Inferno B site! Sub for daily gaming highlights.'
                 },
                 {
                     id: 'clip_2',
-                    title: 'Speedrun Nether Fortress Skip in 1.20',
+                    title: 'Minecraft Speedrun Nether Fortress Skip (World Record Pace)',
                     category: 'Minecraft',
                     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+                    thumbnail: 'https://images.unsplash.com/photo-1627856013091-fed6e4e30025?auto=format&fit=crop&w=800&q=80',
                     author: 'BlockMaster',
                     authorAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
-                    authorId: 'user_2',
-                    likes: 89,
-                    views: 640,
+                    views: '89K views',
+                    viewsCount: 89000,
+                    uploadDate: '12 hours ago',
+                    likes: 8300,
                     liked: false,
                     saved: false,
-                    createdAt: Date.now() - 3600000 * 12
+                    description: 'Sub-10 minute Nether entry using the new blinded bastion navigation trick. Seeds in description.'
                 },
                 {
                     id: 'clip_3',
-                    title: 'Crazy Jett Ace on Ascent B Site',
+                    title: 'Radiant Jett Ace Montage - Rank #1 World Gameplay',
                     category: 'Valorant',
                     videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                    thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80',
                     author: 'RadiantGamer',
                     authorAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80',
-                    authorId: 'user_3',
-                    likes: 210,
-                    views: 2400,
+                    views: '310K views',
+                    viewsCount: 310000,
+                    uploadDate: '1 day ago',
+                    likes: 29500,
                     liked: false,
                     saved: false,
-                    createdAt: Date.now() - 3600000 * 24
+                    description: 'High sensory Valorant gameplay montage featuring crisp operator flicks and dash entries on Ascent & Bind.'
+                },
+                {
+                    id: 'clip_4',
+                    title: 'Cyberpunk 2077 Phantom Liberty Ultimate Tech Build',
+                    category: 'Cyberpunk 2077',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerJoyrides.mp4',
+                    thumbnail: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80',
+                    author: 'NeonRider',
+                    authorAvatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=150&q=80',
+                    views: '45K views',
+                    viewsCount: 45000,
+                    uploadDate: '2 days ago',
+                    likes: 4100,
+                    liked: false,
+                    saved: false,
+                    description: 'Unstoppable Sandevistan melee tech build for Dogtown missions. Complete skill tree breakdown.'
                 }
             ],
-            userProfile: {
-                username: 'CyberKnight',
-                handle: '@cyber_knight',
-                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80',
-                banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
-                bio: 'Gaming enthusiast. Sharing the best highlights & Clutch moments!'
-            }
+            comments: [
+                { id: 'c1', author: 'EsportsFan99', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80', text: 'That second kill flick was absolutely dirty! 🔥', likes: 24, time: '2 hours ago' },
+                { id: 'c2', author: 'GlitchHunter', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80', text: 'Insane reaction time. Subscribed right away!', likes: 8, time: '1 hour ago' }
+            ]
         };
 
-        // Firebase Setup with local fallback
-        let firebaseApp, auth, db;
-        try {
-            const firebaseConfig = typeof __firebase_config !== 'undefined' 
-                ? JSON.parse(__firebase_config) 
-                : { apiKey: "demo", authDomain: "demo.firebaseapp.com", projectId: "demo" };
-            
-            firebaseApp = initializeApp(firebaseConfig);
-            auth = getAuth(firebaseApp);
-            db = getFirestore(firebaseApp);
+        // Navigation Router
+        function navigateTo(view, videoId = null) {
+            appData.activeView = view;
 
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                signInWithCustomToken(auth, __initial_auth_token).catch(() => signInAnonymously(auth));
-            } else {
-                signInAnonymously(auth).catch(() => {});
-            }
-
-            onAuthStateChanged(auth, (user) => {
-                if (user) {
-                    window.appState.currentUser = user;
-                    updateAuthUI();
-                }
+            // Hide all views
+            ['viewHome', 'viewWatch', 'viewChannel', 'viewShorts'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
             });
-        } catch (e) {
-            console.warn("Firebase initialized in Local Fallback mode.");
-        }
 
-        // Window exposed UI functions
-        window.switchTab = function(tab) {
-            window.appState.activeTab = tab;
-            const feedView = document.getElementById('feedView');
-            const profileView = document.getElementById('profileView');
-            const navFeed = document.getElementById('nav-feed');
-            const navProfile = document.getElementById('nav-profile');
+            // Update sidebar buttons
+            document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('bg-yt-hover', 'text-white'));
 
-            if (tab === 'feed') {
-                feedView.classList.remove('hidden');
-                profileView.classList.add('hidden');
-                navFeed.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-white bg-indigo-600 shadow";
-                navProfile.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white";
-            } else {
-                feedView.classList.add('hidden');
-                profileView.classList.remove('hidden');
-                navProfile.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-white bg-indigo-600 shadow";
-                navFeed.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white";
-                renderProfileView();
-            }
-        };
-
-        window.openModal = function(modalId) {
-            document.getElementById(modalId).classList.remove('hidden');
-        };
-
-        window.closeModal = function(modalId) {
-            document.getElementById(modalId).classList.add('hidden');
-        };
-
-        window.filterByCategory = function(cat) {
-            window.appState.activeCategory = cat;
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                if(btn.innerText.includes(cat) || (cat === 'All' && btn.innerText.includes('All'))) {
-                    btn.className = "category-btn active border px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all bg-indigo-600 border-indigo-500 text-white";
-                } else {
-                    btn.className = "category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all";
-                }
-            });
-            renderClips();
-        };
-
-        window.handleSearch = function(query) {
-            window.appState.searchQuery = query.toLowerCase().trim();
-            renderClips();
-        };
-
-        // Clip Interactions
-        window.toggleLike = function(clipId) {
-            const clip = window.appState.clips.find(c => c.id === clipId);
-            if (clip) {
-                clip.liked = !clip.liked;
-                clip.likes += clip.liked ? 1 : -1;
-                renderClips();
-                if (window.appState.activeTab === 'profile') renderProfileView();
-            }
-        };
-
-        window.toggleSave = function(clipId) {
-            const clip = window.appState.clips.find(c => c.id === clipId);
-            if (clip) {
-                clip.saved = !clip.saved;
-                renderClips();
-            }
-        };
-
-        window.incrementView = function(clipId, videoElem) {
-            const clip = window.appState.clips.find(c => c.id === clipId);
-            if (clip && !videoElem.dataset.viewed) {
-                clip.views += 1;
-                videoElem.dataset.viewed = "true";
-                const countElem = document.getElementById(`views-${clipId}`);
-                if (countElem) countElem.innerText = clip.views;
-            }
-        };
-
-        window.toggleFollow = function() {
-            window.appState.isFollowing = !window.appState.isFollowing;
-            const followBtnText = document.getElementById('followBtnText');
-            const followBtn = document.getElementById('followBtn');
-            const followersStat = document.getElementById('statFollowers');
-            
-            let count = parseInt(followersStat.innerText);
-            if (window.appState.isFollowing) {
-                followBtnText.innerText = "Following";
-                followBtn.className = "flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-indigo-500 text-indigo-400 text-sm font-semibold px-5 py-2.5 rounded-xl transition-all";
-                followersStat.innerText = count + 1;
-            } else {
-                followBtnText.innerText = "Follow";
-                followBtn.className = "flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all";
-                followersStat.innerText = count - 1;
-            }
-        };
-
-        // Modal Form Actions
-        window.handleUpload = function(e) {
-            e.preventDefault();
-            const title = document.getElementById('clipTitleInput').value;
-            const category = document.getElementById('clipCategoryInput').value;
-            const fileInput = document.getElementById('clipFileInput');
-            const progressContainer = document.getElementById('uploadProgressContainer');
-            const progressBar = document.getElementById('uploadProgressBar');
-            const percentText = document.getElementById('uploadPercent');
-
-            if (!fileInput.files || !fileInput.files[0]) return;
-
-            const file = fileInput.files[0];
-            const videoBlobUrl = URL.createObjectURL(file);
-
-            progressContainer.classList.remove('hidden');
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 20;
-                progressBar.style.width = `${progress}%`;
-                percentText.innerText = `${progress}%`;
-
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    
-                    // Create new clip record
-                    const newClip = {
-                        id: 'clip_' + Date.now(),
-                        title: title,
-                        category: category,
-                        videoUrl: videoBlobUrl,
-                        author: window.appState.userProfile.username,
-                        authorAvatar: window.appState.userProfile.avatar,
-                        authorId: window.appState.currentUser ? window.appState.currentUser.uid : 'me',
-                        likes: 0,
-                        views: 1,
-                        liked: false,
-                        saved: false,
-                        createdAt: Date.now()
-                    };
-
-                    window.appState.clips.unshift(newClip);
-                    closeModal('uploadModal');
-                    progressContainer.classList.add('hidden');
-                    progressBar.style.width = '0%';
-                    document.getElementById('uploadForm').reset();
-
-                    renderClips();
-                    if (window.appState.activeTab === 'profile') renderProfileView();
-                }
-            }, 150);
-        };
-
-        window.toggleAuthMode = function() {
-            window.appState.isAuthRegisterMode = !window.appState.isAuthRegisterMode;
-            const title = document.getElementById('authTitle');
-            const subtitle = document.getElementById('authSubtitle');
-            const submitBtn = document.getElementById('authSubmitBtn');
-            const toggleBtn = document.getElementById('authToggleBtn');
-            const usernameField = document.getElementById('authUsernameField');
-
-            if (window.appState.isAuthRegisterMode) {
-                title.innerText = "Create Account";
-                subtitle.innerText = "Join GLYPH to share clips and track your stats";
-                submitBtn.innerText = "Sign Up";
-                toggleBtn.innerText = "Already have an account? Sign In";
-                usernameField.classList.remove('hidden');
-            } else {
-                title.innerText = "Welcome Back";
-                subtitle.innerText = "Sign in to publish clips and interact with players";
-                submitBtn.innerText = "Sign In";
-                toggleBtn.innerText = "Don't have an account? Register";
-                usernameField.classList.add('hidden');
-            }
-        };
-
-        window.handleAuth = function(e) {
-            e.preventDefault();
-            const email = document.getElementById('authEmailInput').value;
-            const usernameInput = document.getElementById('authUsernameInput').value;
-
-            window.appState.currentUser = {
-                uid: 'user_' + Date.now(),
-                email: email
-            };
-
-            if (window.appState.isAuthRegisterMode && usernameInput) {
-                window.appState.userProfile.username = usernameInput;
-                window.appState.userProfile.handle = '@' + usernameInput.toLowerCase().replace(/\s+/g, '_');
+            if (view === 'home') {
+                document.getElementById('viewHome').classList.remove('hidden');
+                document.getElementById('snav-home')?.classList.add('bg-yt-hover', 'text-white');
+                renderHomeGrid();
+            } else if (view === 'watch') {
+                document.getElementById('viewWatch').classList.remove('hidden');
+                if (videoId) loadWatchVideo(videoId);
+            } else if (view === 'channel') {
+                document.getElementById('viewChannel').classList.remove('hidden');
+                document.getElementById('snav-channel')?.classList.add('bg-yt-hover', 'text-white');
+                switchChannelTab('home');
+            } else if (view === 'shorts') {
+                document.getElementById('viewShorts').classList.remove('hidden');
+                document.getElementById('snav-shorts')?.classList.add('bg-yt-hover', 'text-white');
             }
 
-            updateAuthUI();
-            closeModal('authModal');
-            document.getElementById('authForm').reset();
-        };
-
-        window.handleProfileUpdate = function(e) {
-            e.preventDefault();
-            const username = document.getElementById('editUsernameInput').value;
-            const avatar = document.getElementById('editAvatarInput').value;
-            const banner = document.getElementById('editBannerInput').value;
-
-            window.appState.userProfile.username = username;
-            window.appState.userProfile.handle = '@' + username.toLowerCase().replace(/\s+/g, '_');
-            window.appState.userProfile.avatar = avatar;
-            window.appState.userProfile.banner = banner;
-
-            closeModal('editProfileModal');
-            renderProfileView();
-        };
-
-        window.handleSignOut = function() {
-            window.appState.currentUser = null;
-            updateAuthUI();
-        };
-
-        function updateAuthUI() {
-            const container = document.getElementById('authButtonContainer');
-            if (window.appState.currentUser) {
-                container.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <img src="${window.appState.userProfile.avatar}" class="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500 cursor-pointer" onclick="switchTab('profile')">
-                        <button onclick="handleSignOut()" class="p-2 bg-slate-800 hover:bg-slate-700 text-gray-400 hover:text-red-400 rounded-xl transition-all" title="Sign Out">
-                            <i data-lucide="log-out" class="w-4 h-4"></i>
-                        </button>
-                    </div>
-                `;
-            } else {
-                container.innerHTML = `
-                    <button onclick="openModal('authModal')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm font-medium px-3.5 py-2 rounded-xl transition-all">
-                        <i data-lucide="log-in" class="w-4 h-4 text-indigo-400"></i>
-                        <span class="hidden md:inline">Sign In</span>
-                    </button>
-                `;
-            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
             lucide.createIcons();
         }
 
-        // Render Functions
-        function createVideoCard(clip) {
-            return `
-                <div class="glass-panel rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-slate-800 flex flex-col group">
-                    <!-- Video Container -->
-                    <div class="relative bg-black aspect-video w-full overflow-hidden">
-                        <video 
-                            src="${clip.videoUrl}" 
-                            class="w-full h-full object-cover" 
-                            controls 
-                            preload="metadata"
-                            onplay="incrementView('${clip.id}', this)">
-                        </video>
-                        <span class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-indigo-300 text-xs font-semibold px-2.5 py-1 rounded-lg">
-                            ${clip.category}
-                        </span>
-                    </div>
+        // Render Home Grid
+        function renderHomeGrid() {
+            const grid = document.getElementById('homeVideoGrid');
+            const empty = document.getElementById('emptyHomeState');
 
-                    <!-- Card Details -->
-                    <div class="p-4 flex-1 flex flex-col justify-between space-y-4">
-                        <div>
-                            <h4 class="font-bold text-base text-gray-100 line-clamp-2 hover:text-indigo-400 transition-colors">${clip.title}</h4>
-                            <div class="flex items-center gap-2.5 mt-3">
-                                <img src="${clip.authorAvatar}" alt="${clip.author}" class="w-7 h-7 rounded-full object-cover">
-                                <span class="text-xs font-medium text-gray-400 hover:text-white transition-colors">${clip.author}</span>
-                            </div>
-                        </div>
-
-                        <!-- Card Controls Bar -->
-                        <div class="flex items-center justify-between border-t border-slate-800/80 pt-3">
-                            <div class="flex items-center gap-4 text-xs font-medium text-gray-400">
-                                <span class="flex items-center gap-1">
-                                    <i data-lucide="eye" class="w-3.5 h-3.5 text-gray-500"></i>
-                                    <span id="views-${clip.id}">${clip.views}</span>
-                                </span>
-                                <button onclick="toggleLike('${clip.id}')" class="flex items-center gap-1.5 transition-colors ${clip.liked ? 'text-rose-500 font-bold' : 'hover:text-rose-400'}">
-                                    <i data-lucide="heart" class="w-4 h-4 ${clip.liked ? 'fill-rose-500 text-rose-500' : ''}"></i>
-                                    <span>${clip.likes}</span>
-                                </button>
-                            </div>
-
-                            <button onclick="toggleSave('${clip.id}')" class="p-1.5 hover:bg-slate-800 rounded-lg text-gray-400 hover:text-indigo-400 transition-all">
-                                <i data-lucide="bookmark" class="w-4 h-4 ${clip.saved ? 'fill-indigo-400 text-indigo-400' : ''}"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderClips() {
-            const grid = document.getElementById('clipsGrid');
-            const emptyState = document.getElementById('emptyFeed');
-
-            let filtered = window.appState.clips.filter(clip => {
-                const matchesCategory = window.appState.activeCategory === 'All' || clip.category === window.appState.activeCategory;
-                const matchesSearch = !window.appState.searchQuery || 
-                    clip.title.toLowerCase().includes(window.appState.searchQuery) ||
-                    clip.author.toLowerCase().includes(window.appState.searchQuery) ||
-                    clip.category.toLowerCase().includes(window.appState.searchQuery);
-                return matchesCategory && matchesSearch;
+            const filtered = appData.videos.filter(v => {
+                const matchCat = appData.activeCategory === 'All' || v.category === appData.activeCategory;
+                return matchCat;
             });
 
             if (filtered.length === 0) {
                 grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
+                empty.classList.remove('hidden');
             } else {
-                emptyState.classList.add('hidden');
-                grid.innerHTML = filtered.map(clip => createVideoCard(clip)).join('');
+                empty.classList.add('hidden');
+                grid.innerHTML = filtered.map(video => `
+                    <div class="space-y-3 cursor-pointer group" onclick="navigateTo('watch', '${video.id}')">
+                        <!-- Thumbnail -->
+                        <div class="relative aspect-video rounded-2xl overflow-hidden bg-yt-card border border-yt-border">
+                            <img src="${video.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <span class="absolute bottom-2 right-2 bg-black/80 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded">
+                                ${video.category}
+                            </span>
+                        </div>
+
+                        <!-- Info details -->
+                        <div class="flex gap-3">
+                            <img src="${video.authorAvatar}" class="w-9 h-9 rounded-full object-cover shrink-0 mt-0.5">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-sm text-gray-100 group-hover:text-indigo-400 transition-colors line-clamp-2 leading-snug">
+                                    ${video.title}
+                                </h3>
+                                <p class="text-xs text-gray-400 font-medium flex items-center gap-1">
+                                    ${video.author}
+                                    <i data-lucide="check-circle-2" class="w-3 h-3 text-indigo-400"></i>
+                                </p>
+                                <p class="text-xs text-gray-400">
+                                    ${video.views} • ${video.uploadDate}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
             }
             lucide.createIcons();
         }
 
-        function renderProfileView() {
-            const p = window.appState.userProfile;
-            document.getElementById('profileUsername').innerText = p.username;
-            document.getElementById('profileHandle').innerText = p.handle;
-            document.getElementById('profileAvatar').src = p.avatar;
-            document.getElementById('profileBanner').src = p.banner;
+        // Load Video Watch Page
+        function loadWatchVideo(videoId) {
+            appData.activeVideoId = videoId;
+            const video = appData.videos.find(v => v.id === videoId) || appData.videos[0];
 
-            // Edit Profile inputs update
-            document.getElementById('editUsernameInput').value = p.username;
-            document.getElementById('editAvatarInput').value = p.avatar;
-            document.getElementById('editBannerInput').value = p.banner;
+            const player = document.getElementById('mainVideoPlayer');
+            const source = document.getElementById('mainVideoSource');
 
-            // User Clips
-            const userClips = window.appState.clips.filter(c => c.author === p.username || c.authorId === (window.appState.currentUser?.uid || 'me'));
-            const profileGrid = document.getElementById('profileClipsGrid');
-            const emptyProfile = document.getElementById('emptyProfileClips');
+            source.src = video.videoUrl;
+            player.load();
 
-            // Stats Update
-            document.getElementById('statClips').innerText = userClips.length;
-            const totalLikes = userClips.reduce((acc, c) => acc + c.likes, 0);
-            document.getElementById('statLikes').innerText = totalLikes;
+            document.getElementById('watchTitle').innerText = video.title;
+            document.getElementById('watchAuthorName').innerText = video.author;
+            document.getElementById('watchAuthorAvatar').src = video.authorAvatar;
+            document.getElementById('watchViewCount').innerText = video.views;
+            document.getElementById('watchUploadDate').innerText = video.uploadDate;
+            document.getElementById('watchDescription').innerText = video.description;
+            document.getElementById('watchLikeCount').innerText = video.likes.toLocaleString();
 
-            if (userClips.length === 0) {
-                profileGrid.innerHTML = '';
-                emptyProfile.classList.remove('hidden');
-            } else {
-                emptyProfile.classList.add('hidden');
-                profileGrid.innerHTML = userClips.map(clip => createVideoCard(clip)).join('');
+            renderUpNextList(videoId);
+            renderComments();
+        }
+
+        // Up Next Video List
+        function renderUpNextList(currentId) {
+            const upNextContainer = document.getElementById('upNextList');
+            const nextVideos = appData.videos.filter(v => v.id !== currentId);
+
+            upNextContainer.innerHTML = nextVideos.map(v => `
+                <div class="flex gap-3 group cursor-pointer" onclick="navigateTo('watch', '${v.id}')">
+                    <div class="relative w-40 aspect-video rounded-xl overflow-hidden bg-yt-card shrink-0">
+                        <img src="${v.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <div class="space-y-1 py-0.5">
+                        <h4 class="font-bold text-xs text-gray-200 group-hover:text-indigo-400 transition-colors line-clamp-2">${v.title}</h4>
+                        <p class="text-[11px] text-gray-400 font-medium">${v.author}</p>
+                        <p class="text-[11px] text-gray-400">${v.views}</p>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // Render Comments
+        function renderComments() {
+            const list = document.getElementById('commentsList');
+            document.getElementById('commentCountHeader').innerText = appData.comments.length;
+
+            list.innerHTML = appData.comments.map(c => `
+                <div class="flex items-start gap-3 text-sm">
+                    <img src="${c.avatar}" class="w-8 h-8 rounded-full object-cover">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-xs text-white">${c.author}</span>
+                            <span class="text-[10px] text-gray-500">${c.time}</span>
+                        </div>
+                        <p class="text-xs text-gray-300">${c.text}</p>
+                        <div class="flex items-center gap-4 text-xs text-gray-400 pt-1">
+                            <button onclick="this.querySelector('span').innerText = parseInt(this.querySelector('span').innerText)+1" class="flex items-center gap-1 hover:text-white">
+                                <i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i>
+                                <span>${c.likes}</span>
+                            </button>
+                            <button class="hover:text-white">Reply</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function postComment() {
+            const input = document.getElementById('newCommentInput');
+            if (!input.value.trim()) return;
+
+            appData.comments.unshift({
+                id: 'c_' + Date.now(),
+                author: appData.userChannel.name,
+                avatar: appData.userChannel.avatar,
+                text: input.value.trim(),
+                likes: 0,
+                time: 'Just now'
+            });
+
+            input.value = '';
+            renderComments();
+        }
+
+        // Channel Tab Switching
+        function switchChannelTab(tab) {
+            document.querySelectorAll('.channel-tab-btn').forEach(b => {
+                b.classList.remove('text-white', 'border-b-2', 'border-red-500');
+            });
+            document.getElementById(`ctab-${tab}`)?.classList.add('text-white', 'border-b-2', 'border-red-500');
+
+            const content = document.getElementById('channelTabContent');
+
+            if (tab === 'home' || tab === 'videos') {
+                content.innerHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${appData.videos.map(v => `
+                            <div class="space-y-2 cursor-pointer group" onclick="navigateTo('watch', '${v.id}')">
+                                <div class="relative aspect-video rounded-2xl overflow-hidden bg-yt-card">
+                                    <img src="${v.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                </div>
+                                <h4 class="font-bold text-sm text-white group-hover:text-indigo-400 line-clamp-1">${v.title}</h4>
+                                <p class="text-xs text-gray-400">${v.views} • ${v.uploadDate}</p>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else if (tab === 'playlists') {
+                content.innerHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                        <div class="bg-yt-card border border-yt-border p-4 rounded-2xl space-y-2">
+                            <div class="aspect-video bg-red-900/40 rounded-xl flex items-center justify-center">
+                                <i data-lucide="play-square" class="w-10 h-10 text-red-500"></i>
+                            </div>
+                            <h4 class="font-bold text-sm text-white">Best Ace Clutch Montages</h4>
+                            <p class="text-xs text-gray-400">8 videos</p>
+                        </div>
+                    </div>
+                `;
+            } else if (tab === 'community') {
+                content.innerHTML = `
+                    <div class="max-w-2xl bg-yt-card border border-yt-border p-6 rounded-2xl space-y-4">
+                        <div class="flex items-center gap-3">
+                            <img src="${appData.userChannel.avatar}" class="w-10 h-10 rounded-full">
+                            <div>
+                                <h4 class="font-bold text-sm text-white">${appData.userChannel.name}</h4>
+                                <span class="text-xs text-gray-500">2 days ago</span>
+                            </div>
+                        </div>
+                        <p class="text-sm text-gray-200">What game should we stream next for the 1.2M Subscriber Special?</p>
+                        <div class="space-y-2 text-xs">
+                            <div class="p-3 bg-[#0f0f0f] border border-yt-border rounded-xl font-medium cursor-pointer hover:border-red-500">🎮 Valorant Ranked Grind</div>
+                            <div class="p-3 bg-[#0f0f0f] border border-yt-border rounded-xl font-medium cursor-pointer hover:border-red-500">⛏️ Minecraft Hardcore Survival</div>
+                        </div>
+                    </div>
+                `;
+            } else if (tab === 'about') {
+                content.innerHTML = `
+                    <div class="bg-yt-card border border-yt-border p-6 rounded-2xl max-w-2xl space-y-4 text-sm text-gray-300">
+                        <h3 class="font-bold text-base text-white">Channel Details</h3>
+                        <p>${appData.userChannel.bio}</p>
+                        <hr class="border-yt-border">
+                        <div class="grid grid-cols-2 gap-4 text-xs">
+                            <div><strong>Joined:</strong> Nov 2023</div>
+                            <div><strong>Total Views:</strong> 12,480,192</div>
+                            <div><strong>Location:</strong> United States</div>
+                        </div>
+                    </div>
+                `;
             }
             lucide.createIcons();
         }
 
-        // App Initializer
+        // Global Action Handlers
+        function filterByCategory(cat) {
+            appData.activeCategory = cat;
+            document.querySelectorAll('.cat-pill').forEach(b => {
+                if (b.innerText.includes(cat)) {
+                    b.className = "cat-pill active px-4 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all bg-white text-black";
+                } else {
+                    b.className = "cat-pill px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-yt-card hover:bg-yt-hover text-gray-200";
+                }
+            });
+            if (appData.activeView !== 'home') navigateTo('home');
+            renderHomeGrid();
+        }
+
+        function handleSearch(val) {
+            const query = val.toLowerCase().trim();
+            const grid = document.getElementById('homeVideoGrid');
+
+            const filtered = appData.videos.filter(v => 
+                v.title.toLowerCase().includes(query) || 
+                v.category.toLowerCase().includes(query) ||
+                v.author.toLowerCase().includes(query)
+            );
+
+            grid.innerHTML = filtered.map(v => `
+                <div class="space-y-3 cursor-pointer group" onclick="navigateTo('watch', '${v.id}')">
+                    <div class="relative aspect-video rounded-2xl overflow-hidden bg-yt-card">
+                        <img src="${v.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                    </div>
+                    <h3 class="font-bold text-sm text-gray-100 group-hover:text-indigo-400 line-clamp-2">${v.title}</h3>
+                    <p class="text-xs text-gray-400">${v.author} • ${v.views}</p>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        function handleUploadSubmit(e) {
+            e.preventDefault();
+            const title = document.getElementById('uploadTitle').value;
+            const category = document.getElementById('uploadCategory').value;
+            const desc = document.getElementById('uploadDescription').value;
+
+            const progressBox = document.getElementById('uploadProgressBox');
+            const bar = document.getElementById('uploadBar');
+            const percent = document.getElementById('uploadPercent');
+
+            progressBox.classList.remove('hidden');
+
+            let p = 0;
+            const interval = setInterval(() => {
+                p += 25;
+                bar.style.width = `${p}%`;
+                percent.innerText = `${p}%`;
+
+                if (p >= 100) {
+                    clearInterval(interval);
+                    appData.videos.unshift({
+                        id: 'clip_' + Date.now(),
+                        title: title,
+                        category: category,
+                        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                        thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
+                        author: appData.userChannel.name,
+                        authorAvatar: appData.userChannel.avatar,
+                        views: '1 view',
+                        viewsCount: 1,
+                        uploadDate: 'Just now',
+                        likes: 1,
+                        description: desc
+                    });
+
+                    closeModal('uploadModal');
+                    progressBox.classList.add('hidden');
+                    bar.style.width = '0%';
+                    document.getElementById('uploadForm').reset();
+                    navigateTo('home');
+                }
+            }, 200);
+        }
+
+        function toggleSubscribe() {
+            const btns = [document.getElementById('watchSubscribeBtn'), document.getElementById('channelSubscribeBtn')];
+            btns.forEach(btn => {
+                if (!btn) return;
+                if (btn.innerText === 'Subscribe') {
+                    btn.innerText = 'Subscribed';
+                    btn.className = "bg-yt-card hover:bg-yt-hover border border-yt-border text-gray-300 text-xs sm:text-sm font-bold px-6 py-2.5 rounded-full transition-all";
+                } else {
+                    btn.innerText = 'Subscribe';
+                    btn.className = "bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-bold px-6 py-2.5 rounded-full shadow-lg shadow-red-600/30 transition-all";
+                }
+            });
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('mainSidebar');
+            sidebar.classList.toggle('w-64');
+            sidebar.classList.toggle('w-16');
+            document.querySelectorAll('.sidebar-text').forEach(t => t.classList.toggle('hidden'));
+        }
+
+        function toggleNotifications() {
+            document.getElementById('notifMenu').classList.toggle('hidden');
+            document.getElementById('notifBadge').classList.add('hidden');
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        function openShareModal() { openModal('shareModal'); }
+        function copyShareUrl() {
+            const input = document.getElementById('shareUrlInput');
+            input.select();
+            document.execCommand('copy');
+            alert('Video URL copied to clipboard!');
+        }
+
+        // Initialize App on DOM Load
         window.addEventListener('DOMContentLoaded', () => {
-            renderClips();
+            renderHomeGrid();
             lucide.createIcons();
         });
     </script>
