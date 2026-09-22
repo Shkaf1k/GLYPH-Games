@@ -1,724 +1,833 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLYPH // Игровые Клипы</title>
+    <title>GLYPH // Gaming Clips Platform</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            accent: '#06b6d4'
+                        },
+                        darkbg: '#0b0f19',
+                        darkcard: '#111827',
+                        glass: 'rgba(17, 24, 39, 0.75)'
+                    }
+                }
+            }
+        }
+    </script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body {
-            background-color: #0b0205;
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
             color: #f3f4f6;
-            font-family: system-ui, -apple-system, sans-serif;
             overflow-x: hidden;
         }
-
-        /* Glassmorphism стиль */
-        .glass-bg {
-            background: linear-gradient(135deg, rgba(25, 8, 15, 0.85) 0%, rgba(10, 3, 6, 0.95) 100%);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
+        .glass-panel {
+            background: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
         }
-
-        .glass-card {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .glass-nav {
+            background: rgba(11, 15, 25, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
-
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.07);
-            border-color: rgba(225, 29, 72, 0.3);
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(225, 29, 72, 0.15);
-        }
-
-        .glass-input {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #fff;
-            transition: all 0.2s;
-        }
-
-        .glass-input:focus {
-            outline: none;
-            border-color: #e11d48;
-            box-shadow: 0 0 15px rgba(225, 29, 72, 0.3);
-        }
-
-        /* Скроллбар */
-        ::-webkit-scrollbar {
+        .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
         }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(225, 29, 72, 0.4);
-            border-radius: 10px;
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.4);
+            border-radius: 4px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(225, 29, 72, 0.8);
-        }
-
-        .ambient-glow {
-            position: fixed;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, rgba(225, 29, 72, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
-            top: -200px;
-            left: -100px;
-            pointer-events: none;
-            z-index: 0;
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.8);
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-2 md:p-6 relative">
-    <div class="ambient-glow"></div>
+<body class="min-h-screen flex flex-col text-gray-100 selection:bg-indigo-500 selection:text-white">
 
-    <!-- Главный контейнер приложения -->
-    <div class="w-full max-w-[1600px] h-[92vh] flex gap-4 relative z-10">
-
-        <!-- 1. Узкая боковая панель -->
-        <aside class="w-20 glass-bg rounded-3xl flex flex-col items-center justify-between py-6 flex-shrink-0">
-            <div class="flex flex-col items-center gap-8 w-full">
-                <!-- Логотип -->
-                <div onclick="switchTab('feed')" class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-600 to-pink-500 flex items-center justify-center shadow-lg shadow-rose-900/40 cursor-pointer hover:scale-105 transition">
-                    <i data-lucide="gamepad-2" class="w-6 h-6 text-white"></i>
+    <!-- Navigation Bar -->
+    <header class="sticky top-0 z-40 glass-nav px-4 lg:px-8 py-3 transition-all duration-300">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            
+            <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('feed')">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-cyan-400 p-[2px] flex items-center justify-center shadow-lg shadow-indigo-500/20">
+                    <div class="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
+                        <i data-lucide="gamepad-2" class="w-5 h-5 text-indigo-400"></i>
+                    </div>
                 </div>
+                <div>
+                    <span class="font-extrabold text-xl tracking-wider bg-gradient-to-r from-white via-indigo-200 to-indigo-400 bg-clip-text text-transparent">GLYPH</span>
+                    <span class="text-[10px] font-bold text-cyan-400 block tracking-widest -mt-1 uppercase">CLIPS</span>
+                </div>
+            </div>
 
-                <!-- Навигация -->
-                <nav class="flex flex-col gap-6 w-full items-center">
-                    <button id="nav-feed" onclick="switchTab('feed')" class="p-3.5 rounded-2xl text-rose-500 bg-rose-500/10 border border-rose-500/20 transition hover:scale-105" title="Главная">
-                        <i data-lucide="home" class="w-6 h-6"></i>
+            <!-- Global Search Bar -->
+            <div class="flex-1 max-w-md mx-4 hidden md:block">
+                <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" placeholder="Search clips, games, creators..." 
+                        oninput="handleSearch(this.value)"
+                        class="w-full bg-slate-900/80 border border-slate-700/60 rounded-xl pl-10 pr-4 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all">
+                </div>
+            </div>
+
+            <!-- Header Action Controls -->
+            <div class="flex items-center gap-3">
+                <!-- Upload Button -->
+                <button onclick="openModal('uploadModal')" class="flex items-center gap-2 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-medium text-sm px-4 py-2 rounded-xl transition-all shadow-lg shadow-indigo-600/30 active:scale-95">
+                    <i data-lucide="plus-circle" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline">Upload Clip</span>
+                </button>
+
+                <!-- Navigation Tabs -->
+                <nav class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+                    <button id="nav-feed" onclick="switchTab('feed')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-white bg-indigo-600 shadow">
+                        <i data-lucide="compass" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Discover</span>
                     </button>
-                    <button onclick="openUploadModal()" class="p-3.5 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition hover:scale-105" title="Загрузить клип">
-                        <i data-lucide="plus-circle" class="w-6 h-6"></i>
-                    </button>
-                    <button id="nav-profile" onclick="switchTab('profile')" class="p-3.5 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition hover:scale-105" title="Мой Профиль">
-                        <i data-lucide="user" class="w-6 h-6"></i>
+                    <button id="nav-profile" onclick="switchTab('profile')" class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white">
+                        <i data-lucide="user" class="w-4 h-4"></i>
+                        <span class="hidden sm:inline">Profile</span>
                     </button>
                 </nav>
-            </div>
 
-            <!-- Вход / Выход -->
-            <div class="flex flex-col items-center gap-4">
-                <button id="auth-btn" onclick="openAuthModal()" class="w-10 h-10 rounded-full bg-rose-600/20 border border-rose-500/30 flex items-center justify-center text-rose-400 hover:bg-rose-600 hover:text-white transition" title="Авторизация">
-                    <i data-lucide="log-in" class="w-5 h-5"></i>
-                </button>
-            </div>
-        </aside>
-
-        <!-- 2. Боковое меню с категориями -->
-        <aside class="w-72 glass-bg rounded-3xl p-6 flex flex-col justify-between hidden md:flex flex-shrink-0">
-            <div>
-                <div class="flex items-center gap-3 mb-8 cursor-pointer" onclick="switchTab('feed')">
-                    <span class="text-xl font-bold tracking-wider text-white">GLYPH</span>
-                    <span class="text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 font-medium">CLIPS</span>
-                </div>
-
-                <div class="space-y-6">
-                    <div>
-                        <p class="text-xs font-semibold text-gray-500 tracking-wider uppercase mb-3">Категории</p>
-                        <div class="space-y-1">
-                            <button id="cat-all" onclick="filterCategory('all')" class="cat-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium bg-white/5 text-white border border-white/10 hover:bg-white/10 transition">
-                                <i data-lucide="flame" class="w-4 h-4 text-rose-500"></i> Все клипы
-                            </button>
-                            <button id="cat-Minecraft" onclick="filterCategory('Minecraft')" class="cat-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
-                                <i data-lucide="box" class="w-4 h-4 text-emerald-400"></i> Minecraft
-                            </button>
-                            <button id="cat-CS2" onclick="filterCategory('CS2')" class="cat-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
-                                <i data-lucide="crosshair" class="w-4 h-4 text-amber-400"></i> CS2
-                            </button>
-                            <button id="cat-Dota 2" onclick="filterCategory('Dota 2')" class="cat-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
-                                <i data-lucide="sword" class="w-4 h-4 text-red-400"></i> Dota 2
-                            </button>
-                            <button id="cat-GTA V" onclick="filterCategory('GTA V')" class="cat-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
-                                <i data-lucide="car" class="w-4 h-4 text-blue-400"></i> GTA V
-                            </button>
-                            <button id="cat-Valorant" onclick="filterCategory('Valorant')" class="cat-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
-                                <i data-lucide="shield" class="w-4 h-4 text-rose-400"></i> Valorant
-                            </button>
-                            <button id="cat-Cyberpunk 2077" onclick="filterCategory('Cyberpunk 2077')" class="cat-btn w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
-                                <i data-lucide="zap" class="w-4 h-4 text-yellow-400"></i> Cyberpunk
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Карточка текущего пользователя -->
-            <div id="side-user-card" class="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between cursor-pointer hover:bg-white/10 transition" onclick="switchTab('profile')">
-                <div class="flex items-center gap-3">
-                    <img id="side-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" class="w-10 h-10 rounded-full object-cover border border-rose-500/50">
-                    <div class="overflow-hidden">
-                        <p id="side-username" class="text-sm font-semibold text-white truncate">Аккаунт</p>
-                        <p id="side-email" class="text-xs text-gray-400 truncate">Войдите в аккаунт</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- 3. Основная контентная область -->
-        <main class="flex-1 glass-bg rounded-3xl p-6 overflow-y-auto flex flex-col gap-6 relative">
-            
-            <!-- Поисковая панель -->
-            <div class="flex items-center justify-between gap-4">
-                <div class="relative flex-1 max-w-xl">
-                    <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                    <input type="text" id="search-input" oninput="searchClips()" placeholder="Поиск игровых моментов, игр или авторов..." class="w-full pl-12 pr-4 py-3 rounded-2xl glass-input text-sm">
-                </div>
-                <button onclick="openUploadModal()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-medium text-sm shadow-lg shadow-rose-900/30 flex items-center gap-2 transition hover:scale-105">
-                    <i data-lucide="upload-cloud" class="w-4 h-4"></i>
-                    <span>Опубликовать клип</span>
-                </button>
-            </div>
-
-            <!-- Вкладка 1: Лента Клипов -->
-            <div id="tab-feed" class="space-y-6">
-                <h2 class="text-xl font-bold tracking-wide text-white flex items-center gap-2">
-                    <i data-lucide="sparkles" class="w-5 h-5 text-rose-500"></i> <span id="feed-title">Рекомендуемые клипы</span>
-                </h2>
-
-                <!-- Сетка карточек клипов -->
-                <div id="clips-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <!-- Загруженные клипы отображаются здесь -->
-                </div>
-
-                <!-- Показывается если клипов нет -->
-                <div id="empty-state" class="hidden flex-col items-center justify-center py-20 text-center">
-                    <div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-4">
-                        <i data-lucide="video-off" class="w-8 h-8 text-gray-500"></i>
-                    </div>
-                    <h3 class="text-lg font-bold text-white mb-1">Пока нет клипов</h3>
-                    <p class="text-sm text-gray-400 mb-4">Будьте первым, кто загрузит клип в эту категорию!</p>
-                    <button onclick="openUploadModal()" class="px-5 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-medium transition">
-                        Загрузить клип
+                <!-- Profile / Auth Button -->
+                <div id="authButtonContainer">
+                    <button onclick="openModal('authModal')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm font-medium px-3.5 py-2 rounded-xl transition-all">
+                        <i data-lucide="log-in" class="w-4 h-4 text-indigo-400"></i>
+                        <span class="hidden md:inline">Sign In</span>
                     </button>
                 </div>
             </div>
+        </div>
 
-            <!-- Вкладка 2: Профиль Пользователя -->
-            <div id="tab-profile" class="hidden space-y-6">
-                <!-- Баннер и Аватар -->
-                <div class="relative rounded-3xl overflow-hidden glass-card border border-white/10">
-                    <div id="profile-banner" class="h-48 w-full bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200');"></div>
-                    <div class="p-6 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4 -mt-16 relative z-10">
-                        <div class="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
-                            <img id="profile-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200" class="w-28 h-28 rounded-2xl object-cover border-4 border-[#0b0205] shadow-2xl">
-                            <div class="mb-2">
-                                <h1 id="profile-name" class="text-2xl font-bold text-white">Аккаунт</h1>
-                                <p id="profile-tag" class="text-sm text-gray-400">@guest</p>
-                            </div>
+        <!-- Mobile Search Input -->
+        <div class="mt-3 md:hidden">
+            <div class="relative">
+                <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" placeholder="Search clips, games..." 
+                    oninput="handleSearch(this.value)"
+                    class="w-full bg-slate-900/80 border border-slate-700/60 rounded-xl pl-10 pr-4 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none focus:border-indigo-500">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 lg:p-8">
+        
+        <!-- ================= FEED VIEW ================= -->
+        <section id="feedView" class="space-y-6">
+            
+            <!-- Category Chips Carousel -->
+            <div class="flex items-center gap-2 overflow-x-auto pb-2 custom-scrollbar">
+                <button onclick="filterByCategory('All')" class="category-btn active border px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all bg-indigo-600 border-indigo-500 text-white">
+                    ✨ All Clips
+                </button>
+                <button onclick="filterByCategory('Minecraft')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
+                    ⛏️ Minecraft
+                </button>
+                <button onclick="filterByCategory('CS2')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
+                    🎯 CS2
+                </button>
+                <button onclick="filterByCategory('Dota 2')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
+                    ⚔️ Dota 2
+                </button>
+                <button onclick="filterByCategory('GTA V')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
+                    🚗 GTA V
+                </button>
+                <button onclick="filterByCategory('Valorant')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
+                    🔥 Valorant
+                </button>
+                <button onclick="filterByCategory('Cyberpunk 2077')" class="category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all">
+                    🤖 Cyberpunk 2077
+                </button>
+            </div>
+
+            <!-- Clips Grid -->
+            <div id="clipsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Video Cards Rendered Dynamically -->
+            </div>
+
+            <!-- Empty Feed State -->
+            <div id="emptyFeed" class="hidden text-center py-20 glass-panel rounded-3xl p-8">
+                <i data-lucide="video-off" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-300">No clips found</h3>
+                <p class="text-gray-500 text-sm mt-1 max-w-sm mx-auto">Try adjusting your search query or select another game category!</p>
+            </div>
+        </section>
+
+        <!-- ================= PROFILE VIEW ================= -->
+        <section id="profileView" class="hidden space-y-8">
+            <!-- Profile Header Card -->
+            <div class="glass-panel rounded-3xl overflow-hidden shadow-2xl relative">
+                <!-- Banner -->
+                <div class="h-48 md:h-64 w-full relative overflow-hidden bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-900">
+                    <img id="profileBanner" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80" alt="Banner" class="w-full h-full object-cover opacity-60">
+                    <div class="absolute inset-0 bg-gradient-to-t from-darkbg via-transparent to-transparent"></div>
+                </div>
+
+                <!-- User Details Container -->
+                <div class="px-6 pb-6 pt-0 relative -mt-16 flex flex-col md:flex-row items-center md:items-end justify-between gap-6">
+                    <div class="flex flex-col md:flex-row items-center md:items-end gap-5 text-center md:text-left">
+                        <!-- Avatar -->
+                        <div class="relative">
+                            <img id="profileAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" alt="Avatar" class="w-28 h-28 md:w-32 md:h-32 rounded-2xl object-cover ring-4 ring-darkbg shadow-2xl">
+                            <div class="absolute -bottom-1 -right-1 w-6 h-6 bg-emerald-500 border-2 border-darkbg rounded-full flex items-center justify-center title='Online'"></div>
                         </div>
-                        <div class="flex items-center gap-3">
-                            <button id="edit-profile-btn" onclick="openEditProfileModal()" class="px-4 py-2.5 rounded-xl glass-card text-sm font-medium hover:bg-white/10 transition hidden">
-                                Настройка профиля
-                            </button>
-                            <button id="subscribe-btn" onclick="toggleSubscribe()" class="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium text-sm transition shadow-lg shadow-rose-900/40">
-                                Подписаться
-                            </button>
+
+                        <!-- Text Details -->
+                        <div class="space-y-1">
+                            <h2 id="profileUsername" class="text-2xl md:text-3xl font-extrabold text-white">Guest User</h2>
+                            <p id="profileHandle" class="text-indigo-400 text-sm font-medium">@guest_player</p>
+                            <p id="profileBio" class="text-gray-400 text-sm max-w-md pt-1">Gaming enthusiast. Sharing the best highlights & Clutch moments!</p>
                         </div>
+                    </div>
+
+                    <!-- Profile Controls -->
+                    <div class="flex items-center gap-3">
+                        <button id="editProfileBtn" onclick="openModal('editProfileModal')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm font-semibold px-4 py-2.5 rounded-xl transition-all">
+                            <i data-lucide="edit-3" class="w-4 h-4"></i>
+                            Edit Profile
+                        </button>
+                        <button id="followBtn" onclick="toggleFollow()" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            <span id="followBtnText">Follow</span>
+                        </button>
                     </div>
                 </div>
 
-                <!-- Клипы авторизованного пользователя -->
-                <div>
-                    <h3 class="text-lg font-bold mb-4 text-white">Мои загруженные клипы</h3>
-                    <div id="user-clips-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- Динамические клипы профиля -->
+                <!-- Stats Bar -->
+                <div class="border-t border-slate-800/80 px-6 py-4 grid grid-cols-3 divide-x divide-slate-800 text-center">
+                    <div>
+                        <span id="statClips" class="block text-xl font-extrabold text-white">0</span>
+                        <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Clips</span>
+                    </div>
+                    <div>
+                        <span id="statLikes" class="block text-xl font-extrabold text-indigo-400">0</span>
+                        <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Total Likes</span>
+                    </div>
+                    <div>
+                        <span id="statFollowers" class="block text-xl font-extrabold text-cyan-400">128</span>
+                        <span class="text-xs font-medium text-gray-400 uppercase tracking-wider">Followers</span>
                     </div>
                 </div>
             </div>
 
-        </main>
-    </div>
-
-    <!-- МОДАЛЬНОЕ ОКНО: Авторизация -->
-    <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="w-full max-w-md glass-bg p-8 rounded-3xl border border-white/10 relative">
-            <button onclick="closeAuthModal()" class="absolute right-6 top-6 text-gray-400 hover:text-white">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <h2 id="auth-title" class="text-2xl font-bold mb-6 text-white text-center">Вход в аккаунт</h2>
-            
-            <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
-                <div id="username-field" class="hidden">
-                    <label class="text-xs text-gray-400 mb-1 block">Имя пользователя</label>
-                    <input type="text" id="auth-username" class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="Gamer123">
+            <!-- Profile Clips Tab Section -->
+            <div>
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-xl font-bold flex items-center gap-2 text-white">
+                        <i data-lucide="film" class="w-5 h-5 text-indigo-400"></i>
+                        Uploaded Clips
+                    </h3>
                 </div>
-                <div>
-                    <label class="text-xs text-gray-400 mb-1 block">Email</label>
-                    <input type="email" id="auth-email" required class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="your@email.com">
+                <div id="profileClipsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- User's Video Cards -->
                 </div>
-                <div>
-                    <label class="text-xs text-gray-400 mb-1 block">Пароль</label>
-                    <input type="password" id="auth-password" required class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="••••••••">
+                <div id="emptyProfileClips" class="hidden text-center py-16 glass-panel rounded-3xl p-8">
+                    <i data-lucide="clapperboard" class="w-12 h-12 text-gray-600 mx-auto mb-3"></i>
+                    <p class="text-gray-400 font-medium">You haven't uploaded any clips yet.</p>
+                    <button onclick="openModal('uploadModal')" class="mt-4 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-medium px-4 py-2 rounded-xl transition-all">Upload Your First Clip</button>
                 </div>
-                <button type="submit" id="auth-submit-btn" class="w-full py-3.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium transition shadow-lg shadow-rose-900/40 mt-2">
-                    Войти
-                </button>
-            </form>
-
-            <div class="mt-6 text-center text-xs text-gray-400">
-                <span id="auth-switch-text">Еще нет аккаунта?</span>
-                <button onclick="toggleAuthMode()" id="auth-switch-btn" class="text-rose-400 hover:underline font-semibold ml-1">Зарегистрироваться</button>
             </div>
-        </div>
-    </div>
+        </section>
+    </main>
 
-    <!-- МОДАЛЬНОЕ ОКНО: Редактирование профиля -->
-    <div id="edit-profile-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="w-full max-w-md glass-bg p-8 rounded-3xl border border-white/10 relative">
-            <button onclick="closeEditProfileModal()" class="absolute right-6 top-6 text-gray-400 hover:text-white">
+    <!-- ================= MODALS ================= -->
+
+    <!-- Upload Clip Modal -->
+    <div id="uploadModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-700/60">
+            <button onclick="closeModal('uploadModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-all">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            <h2 class="text-2xl font-bold mb-6 text-white">Настройка профиля</h2>
-            
-            <form onsubmit="handleSaveProfile(event)" class="space-y-4">
-                <div>
-                    <label class="text-xs text-gray-400 mb-1 block">Имя пользователя</label>
-                    <input type="text" id="edit-username-input" required class="w-full px-4 py-3 rounded-xl glass-input text-sm">
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-2xl">
+                    <i data-lucide="upload-cloud" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <label class="text-xs text-gray-400 mb-1 block">URL Аватарки</label>
-                    <input type="text" id="edit-avatar-input" class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="https://...">
+                    <h3 class="text-xl font-bold text-white">Upload Game Clip</h3>
+                    <p class="text-xs text-gray-400">Share your epic gaming highlight with the community</p>
                 </div>
-                <div>
-                    <label class="text-xs text-gray-400 mb-1 block">URL Баннера</label>
-                    <input type="text" id="edit-banner-input" class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="https://...">
-                </div>
-                <button type="submit" class="w-full py-3.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium transition shadow-lg shadow-rose-900/40 mt-2">
-                    Сохранить изменения
-                </button>
-            </form>
-        </div>
-    </div>
+            </div>
 
-    <!-- МОДАЛЬНОЕ ОКНО: Загрузка Клипа с ПК -->
-    <div id="upload-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
-        <div class="w-full max-w-lg glass-bg p-8 rounded-3xl border border-white/10 relative">
-            <button onclick="closeUploadModal()" class="absolute right-6 top-6 text-gray-400 hover:text-white">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <h2 class="text-2xl font-bold mb-6 text-white">Опубликовать новый клип</h2>
-            
-            <form onsubmit="handleVideoUpload(event)" class="space-y-4">
+            <form id="uploadForm" onsubmit="handleUpload(event)" class="space-y-4">
                 <div>
-                    <label class="text-xs text-gray-400 mb-1 block">Название клипа</label>
-                    <input type="text" id="clip-title" required class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="Заголовок клипа...">
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Clip Title</label>
+                    <input type="text" id="clipTitleInput" required placeholder="e.g., Insane 1v5 Ace Clutch!" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
                 </div>
+
                 <div>
-                    <label class="text-xs text-gray-400 mb-1 block">Игра / Категория</label>
-                    <select id="clip-game" class="w-full px-4 py-3 rounded-xl glass-input text-sm bg-black/60">
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Game Category</label>
+                    <select id="clipCategoryInput" required class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
                         <option value="Minecraft">Minecraft</option>
                         <option value="CS2">CS2</option>
                         <option value="Dota 2">Dota 2</option>
                         <option value="GTA V">GTA V</option>
                         <option value="Valorant">Valorant</option>
                         <option value="Cyberpunk 2077">Cyberpunk 2077</option>
-                        <option value="Другое">Другое</option>
                     </select>
                 </div>
+
                 <div>
-                    <label class="text-xs text-gray-400 mb-1 block">Видеофайл (выберите файл с компьютера)</label>
-                    <input type="file" id="clip-file" accept="video/*" required class="w-full px-4 py-2.5 rounded-xl glass-input text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-rose-600 file:text-white file:cursor-pointer">
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Select Video File</label>
+                    <input type="file" id="clipFileInput" accept="video/*" required class="w-full text-sm text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer bg-slate-900 rounded-xl border border-slate-700/80">
                 </div>
-                <button type="submit" id="upload-submit-btn" class="w-full py-3.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium transition shadow-lg shadow-rose-900/40 mt-4">
-                    Загрузить клип
-                </button>
+
+                <div id="uploadProgressContainer" class="hidden space-y-1 pt-2">
+                    <div class="flex justify-between text-xs text-gray-400">
+                        <span>Uploading clip...</span>
+                        <span id="uploadPercent">0%</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden">
+                        <div id="uploadProgressBar" class="bg-indigo-500 h-full w-0 transition-all duration-300"></div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="closeModal('uploadModal')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-medium text-gray-300">Cancel</button>
+                    <button type="submit" id="uploadSubmitBtn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30">Publish Clip</button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- Firebase SDK (v10 Modular) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, query, orderBy, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+    <!-- Auth Modal -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-700/60">
+            <button onclick="closeModal('authModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-all">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="text-center">
+                <div class="w-12 h-12 bg-indigo-600/20 text-indigo-400 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="user-check" class="w-6 h-6"></i>
+                </div>
+                <h3 id="authTitle" class="text-2xl font-bold text-white">Welcome Back</h3>
+                <p id="authSubtitle" class="text-xs text-gray-400 mt-1">Sign in to publish clips and interact with players</p>
+            </div>
 
-        // Ключи из вашего проекта Firebase (glyph-games)
-        const firebaseConfig = {
-            apiKey: "AIzaSyBanH7DjyOHbYwQk1muX6Q3uOt2Dkg2rWQ",
-            authDomain: "glyph-games.firebaseapp.com",
-            databaseURL: "https://glyph-games-default-rtdb.firebaseio.com",
-            projectId: "glyph-games",
-            storageBucket: "glyph-games.firebasestorage.app",
-            messagingSenderId: "1046063513733",
-            appId: "1:1046063513733:web:e173364beb8a0484dda9ec",
-            measurementId: "G-T5P557BW9T"
+            <form id="authForm" onsubmit="handleAuth(event)" class="space-y-4">
+                <div id="authUsernameField" class="hidden">
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Username</label>
+                    <input type="text" id="authUsernameInput" placeholder="Gamertag" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Email Address</label>
+                    <input type="email" id="authEmailInput" required placeholder="player@glyph.com" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Password</label>
+                    <input type="password" id="authPasswordInput" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <button type="submit" id="authSubmitBtn" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30 transition-all">Sign In</button>
+            </form>
+
+            <div class="text-center pt-2">
+                <button onclick="toggleAuthMode()" id="authToggleBtn" class="text-xs text-indigo-400 hover:underline">Don't have an account? Register</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="glass-panel w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-700/60">
+            <button onclick="closeModal('editProfileModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-slate-800 transition-all">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-3">
+                <div class="p-2.5 bg-indigo-600/20 text-indigo-400 rounded-2xl">
+                    <i data-lucide="user-cog" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h3 class="text-xl font-bold text-white">Edit Profile</h3>
+                    <p class="text-xs text-gray-400">Update your public avatar, banner, and handle</p>
+                </div>
+            </div>
+
+            <form id="editProfileForm" onsubmit="handleProfileUpdate(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Display Name</label>
+                    <input type="text" id="editUsernameInput" required class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Avatar Image URL</label>
+                    <input type="url" id="editAvatarInput" required class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Banner Image URL</label>
+                    <input type="url" id="editBannerInput" required class="w-full bg-slate-900 border border-slate-700/80 rounded-xl px-4 py-2.5 text-sm text-gray-200 focus:outline-none focus:border-indigo-500">
+                </div>
+
+                <div class="flex justify-end gap-3 pt-4">
+                    <button type="button" onclick="closeModal('editProfileModal')" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 rounded-xl text-sm font-medium text-gray-300">Cancel</button>
+                    <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-600/30">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script Logic -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global State & Storage
+        window.appState = {
+            currentUser: null,
+            activeTab: 'feed',
+            activeCategory: 'All',
+            searchQuery: '',
+            isFollowing: false,
+            isAuthRegisterMode: false,
+            clips: [
+                {
+                    id: 'clip_1',
+                    title: 'Insane 1v4 AWP Clutch Defense!',
+                    category: 'CS2',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                    author: 'ViperSniper',
+                    authorAvatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=150&q=80',
+                    authorId: 'user_1',
+                    likes: 142,
+                    views: 1280,
+                    liked: false,
+                    saved: false,
+                    createdAt: Date.now() - 3600000 * 5
+                },
+                {
+                    id: 'clip_2',
+                    title: 'Speedrun Nether Fortress Skip in 1.20',
+                    category: 'Minecraft',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+                    author: 'BlockMaster',
+                    authorAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
+                    authorId: 'user_2',
+                    likes: 89,
+                    views: 640,
+                    liked: false,
+                    saved: false,
+                    createdAt: Date.now() - 3600000 * 12
+                },
+                {
+                    id: 'clip_3',
+                    title: 'Crazy Jett Ace on Ascent B Site',
+                    category: 'Valorant',
+                    videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
+                    author: 'RadiantGamer',
+                    authorAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80',
+                    authorId: 'user_3',
+                    likes: 210,
+                    views: 2400,
+                    liked: false,
+                    saved: false,
+                    createdAt: Date.now() - 3600000 * 24
+                }
+            ],
+            userProfile: {
+                username: 'CyberKnight',
+                handle: '@cyber_knight',
+                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80',
+                banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1200&q=80',
+                bio: 'Gaming enthusiast. Sharing the best highlights & Clutch moments!'
+            }
         };
 
-        let app, auth, db, storage;
-        let currentUser = null;
-        let isSignUpMode = false;
-        let currentFilter = 'all';
-        let allClipsData = [];
-
+        // Firebase Setup with local fallback
+        let firebaseApp, auth, db;
         try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            storage = getStorage(app);
+            const firebaseConfig = typeof __firebase_config !== 'undefined' 
+                ? JSON.parse(__firebase_config) 
+                : { apiKey: "demo", authDomain: "demo.firebaseapp.com", projectId: "demo" };
+            
+            firebaseApp = initializeApp(firebaseConfig);
+            auth = getAuth(firebaseApp);
+            db = getFirestore(firebaseApp);
+
+            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                signInWithCustomToken(auth, __initial_auth_token).catch(() => signInAnonymously(auth));
+            } else {
+                signInAnonymously(auth).catch(() => {});
+            }
+
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    window.appState.currentUser = user;
+                    updateAuthUI();
+                }
+            });
         } catch (e) {
-            console.error("Ошибка Firebase:", e);
+            console.warn("Firebase initialized in Local Fallback mode.");
         }
 
-        // Локальное хранилище для оффлайн работы
-        window.localClips = [];
+        // Window exposed UI functions
+        window.switchTab = function(tab) {
+            window.appState.activeTab = tab;
+            const feedView = document.getElementById('feedView');
+            const profileView = document.getElementById('profileView');
+            const navFeed = document.getElementById('nav-feed');
+            const navProfile = document.getElementById('nav-profile');
 
-        // Отслеживание авторизации
-        if (auth) {
-            onAuthStateChanged(auth, async (user) => {
-                if (user) {
-                    currentUser = user;
-                    const userDoc = await getDoc(doc(db, "users", user.uid));
-                    const userData = userDoc.data() || { 
-                        username: user.email.split('@')[0], 
-                        avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200",
-                        banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200"
+            if (tab === 'feed') {
+                feedView.classList.remove('hidden');
+                profileView.classList.add('hidden');
+                navFeed.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-white bg-indigo-600 shadow";
+                navProfile.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white";
+            } else {
+                feedView.classList.add('hidden');
+                profileView.classList.remove('hidden');
+                navProfile.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-white bg-indigo-600 shadow";
+                navFeed.className = "flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium transition-all text-gray-400 hover:text-white";
+                renderProfileView();
+            }
+        };
+
+        window.openModal = function(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+        };
+
+        window.closeModal = function(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        };
+
+        window.filterByCategory = function(cat) {
+            window.appState.activeCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if(btn.innerText.includes(cat) || (cat === 'All' && btn.innerText.includes('All'))) {
+                    btn.className = "category-btn active border px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all bg-indigo-600 border-indigo-500 text-white";
+                } else {
+                    btn.className = "category-btn border border-slate-800 bg-slate-900/60 text-gray-400 hover:text-white hover:border-slate-700 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap transition-all";
+                }
+            });
+            renderClips();
+        };
+
+        window.handleSearch = function(query) {
+            window.appState.searchQuery = query.toLowerCase().trim();
+            renderClips();
+        };
+
+        // Clip Interactions
+        window.toggleLike = function(clipId) {
+            const clip = window.appState.clips.find(c => c.id === clipId);
+            if (clip) {
+                clip.liked = !clip.liked;
+                clip.likes += clip.liked ? 1 : -1;
+                renderClips();
+                if (window.appState.activeTab === 'profile') renderProfileView();
+            }
+        };
+
+        window.toggleSave = function(clipId) {
+            const clip = window.appState.clips.find(c => c.id === clipId);
+            if (clip) {
+                clip.saved = !clip.saved;
+                renderClips();
+            }
+        };
+
+        window.incrementView = function(clipId, videoElem) {
+            const clip = window.appState.clips.find(c => c.id === clipId);
+            if (clip && !videoElem.dataset.viewed) {
+                clip.views += 1;
+                videoElem.dataset.viewed = "true";
+                const countElem = document.getElementById(`views-${clipId}`);
+                if (countElem) countElem.innerText = clip.views;
+            }
+        };
+
+        window.toggleFollow = function() {
+            window.appState.isFollowing = !window.appState.isFollowing;
+            const followBtnText = document.getElementById('followBtnText');
+            const followBtn = document.getElementById('followBtn');
+            const followersStat = document.getElementById('statFollowers');
+            
+            let count = parseInt(followersStat.innerText);
+            if (window.appState.isFollowing) {
+                followBtnText.innerText = "Following";
+                followBtn.className = "flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-indigo-500 text-indigo-400 text-sm font-semibold px-5 py-2.5 rounded-xl transition-all";
+                followersStat.innerText = count + 1;
+            } else {
+                followBtnText.innerText = "Follow";
+                followBtn.className = "flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-lg shadow-indigo-600/30 transition-all";
+                followersStat.innerText = count - 1;
+            }
+        };
+
+        // Modal Form Actions
+        window.handleUpload = function(e) {
+            e.preventDefault();
+            const title = document.getElementById('clipTitleInput').value;
+            const category = document.getElementById('clipCategoryInput').value;
+            const fileInput = document.getElementById('clipFileInput');
+            const progressContainer = document.getElementById('uploadProgressContainer');
+            const progressBar = document.getElementById('uploadProgressBar');
+            const percentText = document.getElementById('uploadPercent');
+
+            if (!fileInput.files || !fileInput.files[0]) return;
+
+            const file = fileInput.files[0];
+            const videoBlobUrl = URL.createObjectURL(file);
+
+            progressContainer.classList.remove('hidden');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 20;
+                progressBar.style.width = `${progress}%`;
+                percentText.innerText = `${progress}%`;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    
+                    // Create new clip record
+                    const newClip = {
+                        id: 'clip_' + Date.now(),
+                        title: title,
+                        category: category,
+                        videoUrl: videoBlobUrl,
+                        author: window.appState.userProfile.username,
+                        authorAvatar: window.appState.userProfile.avatar,
+                        authorId: window.appState.currentUser ? window.appState.currentUser.uid : 'me',
+                        likes: 0,
+                        views: 1,
+                        liked: false,
+                        saved: false,
+                        createdAt: Date.now()
                     };
 
-                    updateUserUI(userData, user.email);
-                } else {
-                    currentUser = null;
-                    resetUserUI();
+                    window.appState.clips.unshift(newClip);
+                    closeModal('uploadModal');
+                    progressContainer.classList.add('hidden');
+                    progressBar.style.width = '0%';
+                    document.getElementById('uploadForm').reset();
+
+                    renderClips();
+                    if (window.appState.activeTab === 'profile') renderProfileView();
                 }
-                loadClips();
-                lucide.createIcons();
-            });
-        }
+            }, 150);
+        };
 
-        function updateUserUI(userData, email) {
-            document.getElementById('side-username').innerText = userData.username;
-            document.getElementById('side-email').innerText = email;
-            document.getElementById('profile-name').innerText = userData.username;
-            document.getElementById('profile-tag').innerText = `@${userData.username.toLowerCase()}`;
-            
-            if (userData.avatar) {
-                document.getElementById('side-avatar').src = userData.avatar;
-                document.getElementById('profile-avatar').src = userData.avatar;
+        window.toggleAuthMode = function() {
+            window.appState.isAuthRegisterMode = !window.appState.isAuthRegisterMode;
+            const title = document.getElementById('authTitle');
+            const subtitle = document.getElementById('authSubtitle');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const toggleBtn = document.getElementById('authToggleBtn');
+            const usernameField = document.getElementById('authUsernameField');
+
+            if (window.appState.isAuthRegisterMode) {
+                title.innerText = "Create Account";
+                subtitle.innerText = "Join GLYPH to share clips and track your stats";
+                submitBtn.innerText = "Sign Up";
+                toggleBtn.innerText = "Already have an account? Sign In";
+                usernameField.classList.remove('hidden');
+            } else {
+                title.innerText = "Welcome Back";
+                subtitle.innerText = "Sign in to publish clips and interact with players";
+                submitBtn.innerText = "Sign In";
+                toggleBtn.innerText = "Don't have an account? Register";
+                usernameField.classList.add('hidden');
             }
-            if (userData.banner) {
-                document.getElementById('profile-banner').style.backgroundImage = `url('${userData.banner}')`;
-            }
+        };
 
-            document.getElementById('edit-profile-btn').classList.remove('hidden');
-            document.getElementById('auth-btn').innerHTML = `<i data-lucide="log-out" class="w-5 h-5 text-rose-400"></i>`;
-            document.getElementById('auth-btn').onclick = () => signOut(auth);
-        }
-
-        function resetUserUI() {
-            document.getElementById('side-username').innerText = 'Аккаунт';
-            document.getElementById('side-email').innerText = 'Войдите в аккаунт';
-            document.getElementById('profile-name').innerText = 'Аккаунт';
-            document.getElementById('profile-tag').innerText = '@guest';
-            document.getElementById('edit-profile-btn').classList.add('hidden');
-            document.getElementById('auth-btn').innerHTML = `<i data-lucide="log-in" class="w-5 h-5 text-rose-400"></i>`;
-            document.getElementById('auth-btn').onclick = openAuthModal;
-        }
-
-        // Авторизация / Регистрация
-window.handleAuth = async (e) => {
-    e.preventDefault();
-    const email = document.getElementById('auth-email').value.trim();
-    const password = document.getElementById('auth-password').value;
-    const username = document.getElementById('auth-username').value.trim();
-
-    if (password.length < 6) {
-        alert("Пароль должен быть не менее 6 символов!");
-        return;
-    }
-
-    try {
-        if (isSignUpMode) {
-            // Регистрация
-            const res = await createUserWithEmailAndPassword(auth, email, password);
-            await setDoc(doc(db, "users", res.user.uid), {
-                username: username || email.split('@')[0],
-                email: email,
-                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200",
-                banner: "https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200",
-                createdAt: new Date()
-            });
-            alert("Регистрация прошла успешно!");
-        } else {
-            // Вход
-            await signInWithEmailAndPassword(auth, email, password);
-            alert("Вы успешно вошли!");
-        }
-        closeAuthModal();
-    } catch (err) {
-        if (err.code === 'auth/invalid-credential') {
-            alert("Неверный email или пароль. Если вы у нас впервые — сначала нажмите 'Зарегистрироваться' внизу!");
-        } else if (err.code === 'auth/email-already-in-use') {
-            alert("Этот Email уже зарегистрирован! Нажмите 'Войти'.");
-        } else if (err.code === 'auth/invalid-email') {
-            alert("Введите корректный адрес электронной почты.");
-        } else {
-            alert("Ошибка: " + err.message);
-        }
-    }
-};
-        // Сохранение настроек профиля
-        window.handleSaveProfile = async (e) => {
+        window.handleAuth = function(e) {
             e.preventDefault();
-            if (!currentUser) return;
+            const email = document.getElementById('authEmailInput').value;
+            const usernameInput = document.getElementById('authUsernameInput').value;
 
-            const newName = document.getElementById('edit-username-input').value;
-            const newAvatar = document.getElementById('edit-avatar-input').value;
-            const newBanner = document.getElementById('edit-banner-input').value;
+            window.appState.currentUser = {
+                uid: 'user_' + Date.now(),
+                email: email
+            };
 
-            try {
-                const userRef = doc(db, "users", currentUser.uid);
-                const updates = {};
-                if (newName) updates.username = newName;
-                if (newAvatar) updates.avatar = newAvatar;
-                if (newBanner) updates.banner = newBanner;
-
-                await updateDoc(userRef, updates);
-                const updatedDoc = await getDoc(userRef);
-                updateUserUI(updatedDoc.data(), currentUser.email);
-                closeEditProfileModal();
-                alert("Профиль обновлен!");
-            } catch (err) {
-                alert("Ошибка обновления: " + err.message);
+            if (window.appState.isAuthRegisterMode && usernameInput) {
+                window.appState.userProfile.username = usernameInput;
+                window.appState.userProfile.handle = '@' + usernameInput.toLowerCase().replace(/\s+/g, '_');
             }
+
+            updateAuthUI();
+            closeModal('authModal');
+            document.getElementById('authForm').reset();
         };
 
-        // Загрузка видеофайла с ПК
-        window.handleVideoUpload = async (e) => {
+        window.handleProfileUpdate = function(e) {
             e.preventDefault();
-            const title = document.getElementById('clip-title').value;
-            const game = document.getElementById('clip-game').value;
-            const fileInput = document.getElementById('clip-file');
-            const file = fileInput.files[0];
+            const username = document.getElementById('editUsernameInput').value;
+            const avatar = document.getElementById('editAvatarInput').value;
+            const banner = document.getElementById('editBannerInput').value;
 
-            if (!file) return;
+            window.appState.userProfile.username = username;
+            window.appState.userProfile.handle = '@' + username.toLowerCase().replace(/\s+/g, '_');
+            window.appState.userProfile.avatar = avatar;
+            window.appState.userProfile.banner = banner;
 
-            const btn = document.getElementById('upload-submit-btn');
-            btn.innerText = "Загрузка...";
-            btn.disabled = true;
-
-            try {
-                let downloadURL = "";
-
-                if (storage && currentUser) {
-                    const storageRef = ref(storage, `clips/${Date.now()}_${file.name}`);
-                    await uploadBytes(storageRef, file);
-                    downloadURL = await getDownloadURL(storageRef);
-
-                    await addDoc(collection(db, "clips"), {
-                        title,
-                        game,
-                        videoUrl: downloadURL,
-                        author: currentUser.email.split('@')[0],
-                        userId: currentUser.uid,
-                        likes: 0,
-                        createdAt: new Date()
-                    });
-                } else {
-                    downloadURL = URL.createObjectURL(file);
-                    window.localClips.unshift({
-                        id: Date.now().toString(),
-                        title,
-                        game,
-                        author: currentUser ? currentUser.email.split('@')[0] : 'Гость',
-                        videoUrl: downloadURL,
-                        likes: 0,
-                        userId: currentUser ? currentUser.uid : 'guest'
-                    });
-                }
-
-                alert("Клип успешно загружен!");
-                closeUploadModal();
-                loadClips();
-            } catch (err) {
-                alert("Ошибка загрузки: " + err.message);
-            } finally {
-                btn.innerText = "Загрузить клип";
-                btn.disabled = false;
-            }
+            closeModal('editProfileModal');
+            renderProfileView();
         };
 
-        // Загрузка и отображение клипов
-        window.loadClips = async () => {
-            let clips = [...window.localClips];
-
-            if (db) {
-                try {
-                    const q = query(collection(db, "clips"), orderBy("createdAt", "desc"));
-                    const querySnapshot = await getDocs(q);
-                    const firebaseClips = [];
-                    querySnapshot.forEach((doc) => {
-                        firebaseClips.push({ id: doc.id, ...doc.data() });
-                    });
-                    if (firebaseClips.length > 0) clips = firebaseClips;
-                } catch (e) {
-                    console.log("Локальный режим");
-                }
-            }
-
-            allClipsData = clips;
-            renderGrid(clips);
-            renderUserClips(clips);
+        window.handleSignOut = function() {
+            window.appState.currentUser = null;
+            updateAuthUI();
         };
 
-        function renderGrid(clips) {
-            const grid = document.getElementById('clips-grid');
-            const emptyState = document.getElementById('empty-state');
-            grid.innerHTML = '';
-
-            let filtered = clips;
-            if (currentFilter !== 'all') {
-                filtered = clips.filter(c => c.game === currentFilter);
+        function updateAuthUI() {
+            const container = document.getElementById('authButtonContainer');
+            if (window.appState.currentUser) {
+                container.innerHTML = `
+                    <div class="flex items-center gap-2">
+                        <img src="${window.appState.userProfile.avatar}" class="w-8 h-8 rounded-full object-cover ring-2 ring-indigo-500 cursor-pointer" onclick="switchTab('profile')">
+                        <button onclick="handleSignOut()" class="p-2 bg-slate-800 hover:bg-slate-700 text-gray-400 hover:text-red-400 rounded-xl transition-all" title="Sign Out">
+                            <i data-lucide="log-out" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openModal('authModal')" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 border border-slate-700 text-sm font-medium px-3.5 py-2 rounded-xl transition-all">
+                        <i data-lucide="log-in" class="w-4 h-4 text-indigo-400"></i>
+                        <span class="hidden md:inline">Sign In</span>
+                    </button>
+                `;
             }
+            lucide.createIcons();
+        }
+
+        // Render Functions
+        function createVideoCard(clip) {
+            return `
+                <div class="glass-panel rounded-2xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 border border-slate-800 flex flex-col group">
+                    <!-- Video Container -->
+                    <div class="relative bg-black aspect-video w-full overflow-hidden">
+                        <video 
+                            src="${clip.videoUrl}" 
+                            class="w-full h-full object-cover" 
+                            controls 
+                            preload="metadata"
+                            onplay="incrementView('${clip.id}', this)">
+                        </video>
+                        <span class="absolute top-3 left-3 bg-slate-950/80 backdrop-blur-md border border-slate-700/60 text-indigo-300 text-xs font-semibold px-2.5 py-1 rounded-lg">
+                            ${clip.category}
+                        </span>
+                    </div>
+
+                    <!-- Card Details -->
+                    <div class="p-4 flex-1 flex flex-col justify-between space-y-4">
+                        <div>
+                            <h4 class="font-bold text-base text-gray-100 line-clamp-2 hover:text-indigo-400 transition-colors">${clip.title}</h4>
+                            <div class="flex items-center gap-2.5 mt-3">
+                                <img src="${clip.authorAvatar}" alt="${clip.author}" class="w-7 h-7 rounded-full object-cover">
+                                <span class="text-xs font-medium text-gray-400 hover:text-white transition-colors">${clip.author}</span>
+                            </div>
+                        </div>
+
+                        <!-- Card Controls Bar -->
+                        <div class="flex items-center justify-between border-t border-slate-800/80 pt-3">
+                            <div class="flex items-center gap-4 text-xs font-medium text-gray-400">
+                                <span class="flex items-center gap-1">
+                                    <i data-lucide="eye" class="w-3.5 h-3.5 text-gray-500"></i>
+                                    <span id="views-${clip.id}">${clip.views}</span>
+                                </span>
+                                <button onclick="toggleLike('${clip.id}')" class="flex items-center gap-1.5 transition-colors ${clip.liked ? 'text-rose-500 font-bold' : 'hover:text-rose-400'}">
+                                    <i data-lucide="heart" class="w-4 h-4 ${clip.liked ? 'fill-rose-500 text-rose-500' : ''}"></i>
+                                    <span>${clip.likes}</span>
+                                </button>
+                            </div>
+
+                            <button onclick="toggleSave('${clip.id}')" class="p-1.5 hover:bg-slate-800 rounded-lg text-gray-400 hover:text-indigo-400 transition-all">
+                                <i data-lucide="bookmark" class="w-4 h-4 ${clip.saved ? 'fill-indigo-400 text-indigo-400' : ''}"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderClips() {
+            const grid = document.getElementById('clipsGrid');
+            const emptyState = document.getElementById('emptyFeed');
+
+            let filtered = window.appState.clips.filter(clip => {
+                const matchesCategory = window.appState.activeCategory === 'All' || clip.category === window.appState.activeCategory;
+                const matchesSearch = !window.appState.searchQuery || 
+                    clip.title.toLowerCase().includes(window.appState.searchQuery) ||
+                    clip.author.toLowerCase().includes(window.appState.searchQuery) ||
+                    clip.category.toLowerCase().includes(window.appState.searchQuery);
+                return matchesCategory && matchesSearch;
+            });
 
             if (filtered.length === 0) {
+                grid.innerHTML = '';
                 emptyState.classList.remove('hidden');
-                emptyState.classList.add('flex');
             } else {
                 emptyState.classList.add('hidden');
-                emptyState.classList.remove('flex');
+                grid.innerHTML = filtered.map(clip => createVideoCard(clip)).join('');
             }
-
-            filtered.forEach(clip => {
-                const card = document.createElement('div');
-                card.className = "glass-card rounded-2xl overflow-hidden flex flex-col group";
-                card.innerHTML = `
-                    <div class="relative aspect-video bg-black/40 overflow-hidden">
-                        <video src="${clip.videoUrl}" class="w-full h-full object-cover" controls></video>
-                        <span class="absolute top-3 left-3 bg-rose-600/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-lg font-semibold">${clip.game}</span>
-                    </div>
-                    <div class="p-4 flex flex-col justify-between flex-1">
-                        <div>
-                            <h3 class="font-bold text-white text-base line-clamp-1 mb-1">${clip.title}</h3>
-                            <p class="text-xs text-gray-400">Автор: <span class="text-rose-400 font-medium">${clip.author}</span></p>
-                        </div>
-                        <div class="flex items-center justify-between mt-4 pt-3 border-t border-white/5 text-xs text-gray-400">
-                            <button onclick="likeClip(this)" class="flex items-center gap-1 hover:text-rose-500 transition">
-                                <i data-lucide="heart" class="w-4 h-4 text-rose-500"></i> <span>${clip.likes || 0}</span>
-                            </button>
-                            <span class="flex items-center gap-1"><i data-lucide="eye" class="w-4 h-4"></i> Просмотры</span>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
             lucide.createIcons();
         }
 
-        function renderUserClips(clips) {
-            const userGrid = document.getElementById('user-clips-grid');
-            userGrid.innerHTML = '';
+        function renderProfileView() {
+            const p = window.appState.userProfile;
+            document.getElementById('profileUsername').innerText = p.username;
+            document.getElementById('profileHandle').innerText = p.handle;
+            document.getElementById('profileAvatar').src = p.avatar;
+            document.getElementById('profileBanner').src = p.banner;
 
-            if (!currentUser) {
-                userGrid.innerHTML = `<p class="text-gray-400 text-sm col-span-3">Войдите в аккаунт, чтобы видеть свои клипы.</p>`;
-                return;
-            }
+            // Edit Profile inputs update
+            document.getElementById('editUsernameInput').value = p.username;
+            document.getElementById('editAvatarInput').value = p.avatar;
+            document.getElementById('editBannerInput').value = p.banner;
 
-            const myClips = clips.filter(c => c.userId === currentUser.uid);
-            if (myClips.length === 0) {
-                userGrid.innerHTML = `<p class="text-gray-400 text-sm col-span-3">У вас пока нет загруженных клипов.</p>`;
-                return;
-            }
+            // User Clips
+            const userClips = window.appState.clips.filter(c => c.author === p.username || c.authorId === (window.appState.currentUser?.uid || 'me'));
+            const profileGrid = document.getElementById('profileClipsGrid');
+            const emptyProfile = document.getElementById('emptyProfileClips');
 
-            myClips.forEach(clip => {
-                const card = document.createElement('div');
-                card.className = "glass-card rounded-2xl overflow-hidden flex flex-col";
-                card.innerHTML = `
-                    <div class="relative aspect-video bg-black/40">
-                        <video src="${clip.videoUrl}" class="w-full h-full object-cover" controls></video>
-                    </div>
-                    <div class="p-4">
-                        <h3 class="font-bold text-white text-sm line-clamp-1">${clip.title}</h3>
-                        <p class="text-xs text-gray-400 mt-1">${clip.game}</p>
-                    </div>
-                `;
-                userGrid.appendChild(card);
-            });
-        }
+            // Stats Update
+            document.getElementById('statClips').innerText = userClips.length;
+            const totalLikes = userClips.reduce((acc, c) => acc + c.likes, 0);
+            document.getElementById('statLikes').innerText = totalLikes;
 
-        window.filterCategory = (cat) => {
-            currentFilter = cat;
-            document.querySelectorAll('.cat-btn').forEach(b => {
-                b.classList.remove('bg-white/5', 'text-white', 'border', 'border-white/10');
-                b.classList.add('text-gray-400');
-            });
-            const activeBtn = document.getElementById(`cat-${cat}`);
-            if (activeBtn) {
-                activeBtn.classList.add('bg-white/5', 'text-white', 'border', 'border-white/10');
-            }
-            document.getElementById('feed-title').innerText = cat === 'all' ? 'Рекомендуемые клипы' : `Клипы по ${cat}`;
-            renderGrid(allClipsData);
-        };
-
-        window.searchClips = () => {
-            const query = document.getElementById('search-input').value.toLowerCase();
-            const filtered = allClipsData.filter(c => 
-                c.title.toLowerCase().includes(query) || 
-                c.game.toLowerCase().includes(query) ||
-                c.author.toLowerCase().includes(query)
-            );
-            renderGrid(filtered);
-        };
-
-        window.likeClip = (btn) => {
-            const span = btn.querySelector('span');
-            let count = parseInt(span.innerText);
-            span.innerText = count + 1;
-        };
-
-        window.onload = () => {
-            loadClips();
-            lucide.createIcons();
-        };
-    </script>
-
-    <script>
-        function switchTab(tab) {
-            document.getElementById('tab-feed').classList.add('hidden');
-            document.getElementById('tab-profile').classList.add('hidden');
-            document.getElementById(`tab-${tab}`).classList.remove('hidden');
-        }
-
-        function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
-        function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
-        function openUploadModal() { document.getElementById('upload-modal').classList.remove('hidden'); }
-        function closeUploadModal() { document.getElementById('upload-modal').classList.add('hidden'); }
-        function openEditProfileModal() { document.getElementById('edit-profile-modal').classList.remove('hidden'); }
-        function closeEditProfileModal() { document.getElementById('edit-profile-modal').classList.add('hidden'); }
-
-        let isSignUp = false;
-        function toggleAuthMode() {
-            isSignUp = !isSignUp;
-            document.getElementById('username-field').classList.toggle('hidden', !isSignUp);
-            document.getElementById('auth-title').innerText = isSignUp ? "Создать аккаунт" : "Вход в аккаунт";
-            document.getElementById('auth-submit-btn').innerText = isSignUp ? "Зарегистрироваться" : "Войти";
-            document.getElementById('auth-switch-text').innerText = isSignUp ? "Уже есть аккаунт?" : "Еще нет аккаунта?";
-            document.getElementById('auth-switch-btn').innerText = isSignUp ? "Войти" : "Зарегистрироваться";
-        }
-
-        let isSubbed = false;
-        function toggleSubscribe() {
-            isSubbed = !isSubbed;
-            const btn = document.getElementById('subscribe-btn');
-            if (isSubbed) {
-                btn.innerText = "Вы подписаны";
-                btn.className = "px-6 py-2.5 rounded-xl bg-white/10 text-white font-medium text-sm transition border border-white/20";
+            if (userClips.length === 0) {
+                profileGrid.innerHTML = '';
+                emptyProfile.classList.remove('hidden');
             } else {
-                btn.innerText = "Подписаться";
-                btn.className = "px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium text-sm transition shadow-lg shadow-rose-900/40";
+                emptyProfile.classList.add('hidden');
+                profileGrid.innerHTML = userClips.map(clip => createVideoCard(clip)).join('');
             }
+            lucide.createIcons();
         }
+
+        // App Initializer
+        window.addEventListener('DOMContentLoaded', () => {
+            renderClips();
+            lucide.createIcons();
+        });
     </script>
 </body>
 </html>
