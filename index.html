@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GLYPH // Игровые Клипы</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            background-color: #0b0205;
+            color: #f3f4f6;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* Анимированный стеклянный фон */
+        .glass-bg {
+            background: linear-gradient(135deg, rgba(25, 8, 15, 0.85) 0%, rgba(10, 3, 6, 0.95) 100%);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            background: rgba(255, 255, 255, 0.07);
+            border-color: rgba(225, 29, 72, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(225, 29, 72, 0.15);
+        }
+
+        .glass-input {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transition: all 0.2s;
+        }
+
+        .glass-input:focus {
+            outline: none;
+            border-color: #e11d48;
+            box-shadow: 0 0 15px rgba(225, 29, 72, 0.3);
+        }
+
+        /* Кастомный скроллбар */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(225, 29, 72, 0.4);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(225, 29, 72, 0.8);
+        }
+
+        /* Фоновое свечение */
+        .ambient-glow {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(225, 29, 72, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            top: -200px;
+            left: -100px;
+            pointer-events: none;
+            z-index: 0;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-2 md:p-6 relative">
+    <div class="ambient-glow"></div>
+
+    <!-- Главный контейнер приложения -->
+    <div class="w-full max-w-[1600px] h-[92vh] flex gap-4 relative z-10">
+
+        <!-- 1. Левая узкая навигационная панель -->
+        <aside class="w-20 glass-bg rounded-3xl flex flex-col items-center justify-between py-6 flex-shrink-0">
+            <div class="flex flex-col items-center gap-8 w-full">
+                <!-- Логотип -->
+                <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-rose-600 to-pink-500 flex items-center justify-center shadow-lg shadow-rose-900/40 cursor-pointer">
+                    <i data-lucide="gamepad-2" class="w-6 h-6 text-white"></i>
+                </div>
+
+                <!-- Кнопки Навигации -->
+                <nav class="flex flex-col gap-6 w-full items-center">
+                    <button onclick="switchTab('feed')" class="p-3.5 rounded-2xl text-rose-500 bg-rose-500/10 border border-rose-500/20 transition hover:scale-105" title="Главная">
+                        <i data-lucide="home" class="w-6 h-6"></i>
+                    </button>
+                    <button onclick="openUploadModal()" class="p-3.5 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition hover:scale-105" title="Загрузить клип">
+                        <i data-lucide="plus-circle" class="w-6 h-6"></i>
+                    </button>
+                    <button onclick="switchTab('profile')" class="p-3.5 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition hover:scale-105" title="Мой Профиль">
+                        <i data-lucide="user" class="w-6 h-6"></i>
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Профиль / Авторизация внизу -->
+            <div class="flex flex-col items-center gap-4">
+                <button id="auth-btn" onclick="openAuthModal()" class="w-10 h-10 rounded-full bg-rose-600/20 border border-rose-500/30 flex items-center justify-center text-rose-400 hover:bg-rose-600 hover:text-white transition">
+                    <i data-lucide="log-in" class="w-5 h-5"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- 2. Выдвижное меню слева -->
+        <aside class="w-72 glass-bg rounded-3xl p-6 flex flex-col justify-between hidden md:flex flex-shrink-0">
+            <div>
+                <div class="flex items-center gap-3 mb-8">
+                    <span class="text-xl font-bold tracking-wider text-white">GLYPH</span>
+                    <span class="text-xs px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-400 border border-rose-500/30 font-medium">CLIPS</span>
+                </div>
+
+                <div class="space-y-6">
+                    <div>
+                        <p class="text-xs font-semibold text-gray-500 tracking-wider uppercase mb-3">Категории</p>
+                        <div class="space-y-1">
+                            <button onclick="filterCategory('all')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium bg-white/5 text-white border border-white/10 hover:bg-white/10 transition">
+                                <i data-lucide="flame" class="w-4 h-4 text-rose-500"></i> Все клипы
+                            </button>
+                            <button onclick="filterCategory('CS2')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
+                                <i data-lucide="crosshair" class="w-4 h-4"></i> CS2
+                            </button>
+                            <button onclick="filterCategory('Dota 2')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
+                                <i data-lucide="sword" class="w-4 h-4"></i> Dota 2
+                            </button>
+                            <button onclick="filterCategory('GTA V')" class="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 hover:text-white hover:bg-white/5 transition">
+                                <i data-lucide="car" class="w-4 h-4"></i> GTA V
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Блок аккаунта снизу -->
+            <div id="side-user-card" class="p-3 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between cursor-pointer hover:bg-white/10 transition" onclick="switchTab('profile')">
+                <div class="flex items-center gap-3">
+                    <img id="side-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=100" class="w-10 h-10 rounded-full object-cover border border-rose-500/50">
+                    <div class="overflow-hidden">
+                        <p id="side-username" class="text-sm font-semibold text-white truncate">Гость</p>
+                        <p id="side-email" class="text-xs text-gray-400 truncate">Войдите в аккаунт</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 3. Основная контентная область -->
+        <main class="flex-1 glass-bg rounded-3xl p-6 overflow-y-auto flex flex-col gap-6 relative">
+            
+            <!-- Поисковая строка -->
+            <div class="flex items-center justify-between gap-4">
+                <div class="relative flex-1 max-w-xl">
+                    <i data-lucide="search" class="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="search-input" onkeyup="searchClips()" placeholder="Поиск игровых моментов, игр или авторов..." class="w-full pl-12 pr-4 py-3 rounded-2xl glass-input text-sm">
+                </div>
+                <button onclick="openUploadModal()" class="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-pink-600 hover:from-rose-500 hover:to-pink-500 text-white font-medium text-sm shadow-lg shadow-rose-900/30 flex items-center gap-2 transition hover:scale-105">
+                    <i data-lucide="upload-cloud" class="w-4 h-4"></i>
+                    <span>Опубликовать клип</span>
+                </button>
+            </div>
+
+            <!-- Вкладка 1: Лента Клипов -->
+            <div id="tab-feed" class="space-y-6">
+                <h2 class="text-xl font-bold tracking-wide text-white flex items-center gap-2">
+                    <i data-lucide="sparkles" class="w-5 h-5 text-rose-500"></i> Рекомендуемые стримы и клипы
+                </h2>
+
+                <!-- Сетка карточек клипов -->
+                <div id="clips-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Загрузка / Карточки генерируются динамически JS -->
+                </div>
+            </div>
+
+            <!-- Вкладка 2: Профиль Пользователя -->
+            <div id="tab-profile" class="hidden space-y-6">
+                <!-- Баннер и Аватар -->
+                <div class="relative rounded-3xl overflow-hidden glass-card border border-white/10">
+                    <div id="profile-banner" class="h-48 w-full bg-cover bg-center" style="background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?w=1200');"></div>
+                    <div class="p-6 flex flex-col sm:flex-row items-center sm:items-end justify-between gap-4 -mt-16 relative z-10">
+                        <div class="flex flex-col sm:flex-row items-center sm:items-end gap-4 text-center sm:text-left">
+                            <img id="profile-avatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200" class="w-28 h-28 rounded-2xl object-cover border-4 border-[#0b0205] shadow-2xl">
+                            <div class="mb-2">
+                                <h1 id="profile-name" class="text-2xl font-bold text-white">Гость</h1>
+                                <p id="profile-tag" class="text-sm text-gray-400">@guest</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <button id="edit-profile-btn" onclick="openEditProfileModal()" class="px-4 py-2.5 rounded-xl glass-card text-sm font-medium hover:bg-white/10 transition hidden">
+                                Редактировать профиль
+                            </button>
+                            <button id="subscribe-btn" onclick="toggleSubscribe()" class="px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium text-sm transition shadow-lg shadow-rose-900/40">
+                                Подписаться
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Клипы пользователя -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4 text-white">Загруженные клипы</h3>
+                    <div id="user-clips-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Динамические клипы пользователя -->
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО: Авторизация / Регистрация -->
+    <div id="auth-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md glass-bg p-8 rounded-3xl border border-white/10 relative">
+            <button onclick="closeAuthModal()" class="absolute right-6 top-6 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h2 id="auth-title" class="text-2xl font-bold mb-6 text-white text-center">Вход в аккаунт</h2>
+            
+            <form id="auth-form" onsubmit="handleAuth(event)" class="space-y-4">
+                <div id="username-field" class="hidden">
+                    <label class="text-xs text-gray-400 mb-1 block">Имя пользователя</label>
+                    <input type="text" id="auth-username" class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="Gamer123">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 mb-1 block">Email</label>
+                    <input type="email" id="auth-email" required class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="your@email.com">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 mb-1 block">Пароль</label>
+                    <input type="password" id="auth-password" required class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="••••••••">
+                </div>
+                <button type="submit" id="auth-submit-btn" class="w-full py-3.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium transition shadow-lg shadow-rose-900/40 mt-2">
+                    Войти
+                </button>
+            </form>
+
+            <div class="mt-6 text-center text-xs text-gray-400">
+                <span id="auth-switch-text">Еще нет аккаунта?</span>
+                <button onclick="toggleAuthMode()" id="auth-switch-btn" class="text-rose-400 hover:underline font-semibold ml-1">Зарегистрироваться</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО: Загрузка Клипа (с ПК) -->
+    <div id="upload-modal" class="fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-lg glass-bg p-8 rounded-3xl border border-white/10 relative">
+            <button onclick="closeUploadModal()" class="absolute right-6 top-6 text-gray-400 hover:text-white">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h2 class="text-2xl font-bold mb-6 text-white">Опубликовать новый клип</h2>
+            
+            <form onsubmit="handleVideoUpload(event)" class="space-y-4">
+                <div>
+                    <label class="text-xs text-gray-400 mb-1 block">Название клипа</label>
+                    <input type="text" id="clip-title" required class="w-full px-4 py-3 rounded-xl glass-input text-sm" placeholder="Супер эйс в CS2!">
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 mb-1 block">Игра / Категория</label>
+                    <select id="clip-game" class="w-full px-4 py-3 rounded-xl glass-input text-sm bg-black/60">
+                        <option value="CS2">CS2</option>
+                        <option value="Dota 2">Dota 2</option>
+                        <option value="GTA V">GTA V</option>
+                        <option value="Другое">Другое</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs text-gray-400 mb-1 block">Видеофайл (с компьютера)</label>
+                    <input type="file" id="clip-file" accept="video/*" required class="w-full px-4 py-2.5 rounded-xl glass-input text-sm file:mr-4 file:py-1 file:px-3 file:rounded-lg file:border-0 file:bg-rose-600 file:text-white file:cursor-pointer">
+                </div>
+                <button type="submit" id="upload-submit-btn" class="w-full py-3.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-medium transition shadow-lg shadow-rose-900/40 mt-4">
+                    Загрузить клип
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase SDK (v10 Modular) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, query, orderBy, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-storage.js";
+
+        // ==========================================
+        // 🔑 ВСТАВЬТЕ ВАШИ КЛЮЧИ FIREBASE СЮДА:
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Инициализация Firebase
+        let app, auth, db, storage;
+        let currentUser = null;
+        let isSignUpMode = false;
+
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            storage = getStorage(app);
+            console.log("Firebase успешно подключен!");
+        } catch (e) {
+            console.warn("Ошибка подключения Firebase (Работает в демо-режиме):", e);
+        }
+
+        // Локальное хранилище клипов (если Firebase еще не подключен)
+        window.localClips = [
+            {
+                id: '1',
+                title: 'Бешеный эйс на A-пленте!',
+                game: 'CS2',
+                author: 'ProGamer_99',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+                likes: 142,
+                views: '1.2k'
+            },
+            {
+                id: '2',
+                title: 'Минус 5 в ранкеде Dota 2',
+                game: 'Dota 2',
+                author: 'Miracle_Fan',
+                videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4',
+                likes: 89,
+                views: '850'
+            }
+        ];
+
+        // Отслеживание входа
+        if (auth) {
+            onAuthStateChanged(auth, async (user) => {
+                if (user) {
+                    currentUser = user;
+                    const userDoc = await getDoc(doc(db, "users", user.uid));
+                    const userData = userDoc.data() || { username: user.email.split('@')[0], avatar: '' };
+
+                    document.getElementById('side-username').innerText = userData.username;
+                    document.getElementById('side-email').innerText = user.email;
+                    document.getElementById('profile-name').innerText = userData.username;
+                    document.getElementById('profile-tag').innerText = `@${userData.username.toLowerCase()}`;
+                    
+                    document.getElementById('auth-btn').innerHTML = `<i data-lucide="log-out" class="w-5 h-5 text-rose-400"></i>`;
+                    document.getElementById('auth-btn').onclick = () => signOut(auth);
+                } else {
+                    currentUser = null;
+                    document.getElementById('side-username').innerText = 'Гость';
+                    document.getElementById('side-email').innerText = 'Войдите в аккаунт';
+                    document.getElementById('auth-btn').innerHTML = `<i data-lucide="log-in" class="w-5 h-5 text-rose-400"></i>`;
+                    document.getElementById('auth-btn').onclick = openAuthModal;
+                }
+                lucide.createIcons();
+            });
+        }
+
+        // Авторизация / Регистрация
+        window.handleAuth = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
+            const password = document.getElementById('auth-password').value;
+            const username = document.getElementById('auth-username').value;
+
+            if (!auth) {
+                alert("Пожалуйста, вставьте реальные ключи firebaseConfig в код!");
+                return;
+            }
+
+            try {
+                if (isSignUpMode) {
+                    const res = await createUserWithEmailAndPassword(auth, email, password);
+                    await setDoc(doc(db, "users", res.user.uid), {
+                        username: username || email.split('@')[0],
+                        email: email,
+                        createdAt: new Date()
+                    });
+                    alert("Регистрация успешна!");
+                } else {
+                    await signInWithEmailAndPassword(auth, email, password);
+                    alert("Вы успешно вошли!");
+                }
+                closeAuthModal();
+            } catch (err) {
+                alert("Ошибка: " + err.message);
+            }
+        };
+
+        // Загрузка видео с компьютера
+        window.handleVideoUpload = async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('clip-title').value;
+            const game = document.getElementById('clip-game').value;
+            const fileInput = document.getElementById('clip-file');
+            const file = fileInput.files[0];
+
+            if (!file) return;
+
+            const btn = document.getElementById('upload-submit-btn');
+            btn.innerText = "Загрузка...";
+            btn.disabled = true;
+
+            try {
+                let downloadURL = "";
+
+                if (storage && currentUser) {
+                    // Загрузка в Firebase Storage
+                    const storageRef = ref(storage, `clips/${Date.now()}_${file.name}`);
+                    await uploadBytes(storageRef, file);
+                    downloadURL = await getDownloadURL(storageRef);
+
+                    // Сохранение записи в Firestore
+                    await addDoc(collection(db, "clips"), {
+                        title,
+                        game,
+                        videoUrl: downloadURL,
+                        author: currentUser.email.split('@')[0],
+                        userId: currentUser.uid,
+                        likes: 0,
+                        createdAt: new Date()
+                    });
+                } else {
+                    // Локальное чтение видео из файла (без сервера)
+                    downloadURL = URL.createObjectURL(file);
+                    window.localClips.unshift({
+                        id: Date.now().toString(),
+                        title,
+                        game,
+                        author: currentUser ? currentUser.email.split('@')[0] : 'Гость',
+                        videoUrl: downloadURL,
+                        likes: 0,
+                        views: '1'
+                    });
+                }
+
+                alert("Клип успешно загружен!");
+                closeUploadModal();
+                loadClips();
+            } catch (err) {
+                alert("Ошибка загрузки: " + err.message);
+            } finally {
+                btn.innerText = "Загрузить клип";
+                btn.disabled = false;
+            }
+        };
+
+        // Отрисовка клипов
+        window.loadClips = async () => {
+            const grid = document.getElementById('clips-grid');
+            grid.innerHTML = '';
+
+            let clipsToRender = window.localClips;
+
+            if (db) {
+                try {
+                    const q = query(collection(db, "clips"), orderBy("createdAt", "desc"));
+                    const querySnapshot = await getDocs(q);
+                    const firebaseClips = [];
+                    querySnapshot.forEach((doc) => {
+                        firebaseClips.push({ id: doc.id, ...doc.data() });
+                    });
+                    if (firebaseClips.length > 0) clipsToRender = firebaseClips;
+                } catch (e) {
+                    console.log("Загружены локальные клипы");
+                }
+            }
+
+            clipsToRender.forEach(clip => {
+                const card = document.createElement('div');
+                card.className = "glass-card rounded-2xl overflow-hidden flex flex-col group";
+                card.innerHTML = `
+                    <div class="relative aspect-video bg-black/40 overflow-hidden">
+                        <video src="${clip.videoUrl}" class="w-full h-full object-cover" controls></video>
+                        <span class="absolute top-3 left-3 bg-rose-600/80 backdrop-blur-md text-white text-xs px-2.5 py-1 rounded-lg font-semibold">${clip.game}</span>
+                    </div>
+                    <div class="p-4 flex flex-col justify-between flex-1">
+                        <div>
+                            <h3 class="font-bold text-white text-base line-clamp-1 mb-1">${clip.title}</h3>
+                            <p class="text-xs text-gray-400">Автор: <span class="text-rose-400 font-medium">${clip.author}</span></p>
+                        </div>
+                        <div class="flex items-center justify-between mt-4 pt-3 border-t border-white/5 text-xs text-gray-400">
+                            <span class="flex items-center gap-1"><i data-lucide="heart" class="w-4 h-4 text-rose-500"></i> ${clip.likes || 0}</span>
+                            <span class="flex items-center gap-1"><i data-lucide="eye" class="w-4 h-4"></i> ${clip.views || '100+'}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            lucide.createIcons();
+        };
+
+        // Инициализация
+        window.onload = () => {
+            loadClips();
+            lucide.createIcons();
+        };
+    </script>
+
+    <!-- Вспомогательные функции интерфейса -->
+    <script>
+        function switchTab(tab) {
+            document.getElementById('tab-feed').classList.add('hidden');
+            document.getElementById('tab-profile').classList.add('hidden');
+            document.getElementById(`tab-${tab}`).classList.remove('hidden');
+        }
+
+        function openAuthModal() { document.getElementById('auth-modal').classList.remove('hidden'); }
+        function closeAuthModal() { document.getElementById('auth-modal').classList.add('hidden'); }
+        function openUploadModal() { document.getElementById('upload-modal').classList.remove('hidden'); }
+        function closeUploadModal() { document.getElementById('upload-modal').classList.add('hidden'); }
+
+        let isSignUp = false;
+        function toggleAuthMode() {
+            isSignUp = !isSignUp;
+            document.getElementById('username-field').classList.toggle('hidden', !isSignUp);
+            document.getElementById('auth-title').innerText = isSignUp ? "Создать аккаунт" : "Вход в аккаунт";
+            document.getElementById('auth-submit-btn').innerText = isSignUp ? "Зарегистрироваться" : "Войти";
+            document.getElementById('auth-switch-text').innerText = isSignUp ? "Уже есть аккаунт?" : "Еще нет аккаунта?";
+            document.getElementById('auth-switch-btn').innerText = isSignUp ? "Войти" : "Зарегистрироваться";
+        }
+    </script>
+</body>
+</html>
