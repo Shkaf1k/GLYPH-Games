@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="ru" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GLYPH // Gaming Video Platform</title>
+    <title>GLYPH // Игровая видеоплатформа</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -35,7 +35,6 @@
             color: #f1f1f1;
             overflow-x: hidden;
         }
-        /* Custom scrollbar matching YouTube style */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -61,7 +60,6 @@
             background: rgba(15, 15, 15, 0.95);
             backdrop-filter: blur(12px);
         }
-        /* Animated red glowing badge for live/hot tags */
         .live-badge {
             box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
         }
@@ -69,10 +67,13 @@
 </head>
 <body class="min-h-screen flex flex-col bg-[#0f0f0f] text-gray-100 antialiased selection:bg-red-600 selection:text-white">
 
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"></div>
+
     <header class="sticky top-0 z-50 glass-header border-b border-yt-border px-4 py-2.5 flex items-center justify-between gap-4 h-14">
         <!-- Left: Sidebar Toggle & Brand Logo -->
         <div class="flex items-center gap-4">
-            <button onclick="toggleSidebar()" class="p-2 hover:bg-yt-hover rounded-full transition-colors text-gray-200" title="Toggle Sidebar">
+            <button onclick="toggleSidebar()" class="p-2 hover:bg-yt-hover rounded-full transition-colors text-gray-200" title="Переключить меню">
                 <i data-lucide="menu" class="w-5 h-5"></i>
             </button>
 
@@ -89,68 +90,60 @@
             </div>
         </div>
 
-        <!-- Center: Search Bar & Voice Input Placeholder -->
+        <!-- Center: Search Bar & Voice Input -->
         <div class="flex-1 max-w-2xl mx-4 hidden md:flex items-center gap-3">
             <div class="flex flex-1 items-center bg-[#121212] border border-yt-border rounded-full overflow-hidden focus-within:border-indigo-500 transition-colors">
-                <input type="text" id="searchInput" placeholder="Search gaming clips, creators, esports..." 
+                <input type="text" id="searchInput" placeholder="Поиск стримов, клипов, киберспорта..." 
                     oninput="handleSearch(this.value)"
                     class="w-full bg-transparent px-4 py-2 text-sm text-gray-200 placeholder-gray-500 focus:outline-none">
-                <button onclick="triggerSearch()" class="px-5 py-2.5 bg-yt-card hover:bg-yt-hover border-l border-yt-border text-gray-300 hover:text-white transition-colors" title="Search">
+                <button onclick="triggerSearch()" class="px-5 py-2.5 bg-yt-card hover:bg-yt-hover border-l border-yt-border text-gray-300 hover:text-white transition-colors" title="Поиск">
                     <i data-lucide="search" class="w-4 h-4"></i>
                 </button>
             </div>
-            <button onclick="simulateVoiceSearch()" class="p-2.5 bg-yt-card hover:bg-yt-hover border border-yt-border rounded-full text-gray-300 hover:text-white transition-colors" title="Search with voice">
+            <button onclick="simulateVoiceSearch()" class="p-2.5 bg-yt-card hover:bg-yt-hover border border-yt-border rounded-full text-gray-300 hover:text-white transition-colors" title="Голосовой поиск">
                 <i data-lucide="mic" class="w-4 h-4"></i>
             </button>
         </div>
 
-        <!-- Right: Action Controls & User Avatar -->
+        <!-- Right: Actions & Profile Dropdown -->
         <div class="flex items-center gap-2 sm:gap-3">
-            <!-- Upload Video Button -->
+            <!-- Create Video Button -->
             <button onclick="openModal('uploadModal')" class="flex items-center gap-2 bg-yt-card hover:bg-yt-hover border border-yt-border text-sm font-medium px-3.5 py-1.5 rounded-full transition-all text-gray-200 active:scale-95">
                 <i data-lucide="plus" class="w-4 h-4 text-red-500"></i>
-                <span class="hidden sm:inline">Create</span>
+                <span class="hidden sm:inline">Создать</span>
             </button>
 
             <!-- Notifications Bell -->
             <div class="relative">
-                <button onclick="toggleNotifications()" class="p-2 hover:bg-yt-hover rounded-full transition-colors text-gray-300 hover:text-white relative" title="Notifications">
+                <button onclick="toggleNotifications()" class="p-2 hover:bg-yt-hover rounded-full transition-colors text-gray-300 hover:text-white relative" title="Уведомления">
                     <i data-lucide="bell" class="w-5 h-5"></i>
                     <span id="notifBadge" class="absolute top-1 right-1 w-2 h-2 bg-red-600 rounded-full ring-2 ring-black"></span>
                 </button>
-                <!-- Notification Dropdown -->
                 <div id="notifMenu" class="hidden absolute right-0 mt-2 w-80 bg-yt-card border border-yt-border rounded-2xl shadow-2xl p-4 z-50 space-y-3">
                     <div class="flex items-center justify-between border-b border-yt-border pb-2">
-                        <span class="font-bold text-sm text-white">Notifications</span>
-                        <span class="text-xs text-indigo-400 cursor-pointer hover:underline" onclick="this.parentElement.parentElement.classList.add('hidden')">Mark as read</span>
+                        <span class="font-bold text-sm text-white">Уведомления</span>
+                        <span class="text-xs text-indigo-400 cursor-pointer hover:underline" onclick="this.parentElement.parentElement.classList.add('hidden')">Прочитать все</span>
                     </div>
                     <div class="space-y-3 text-xs">
                         <div class="flex items-start gap-3 p-1.5 hover:bg-yt-hover rounded-lg cursor-pointer" onclick="navigateTo('watch', 'clip_1')">
                             <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=80&q=80" class="w-8 h-8 rounded-full object-cover">
                             <div>
-                                <p class="text-gray-200"><strong class="text-white">ViperSniper</strong> uploaded a new clutch montage!</p>
-                                <span class="text-[10px] text-gray-400">10 mins ago</span>
-                            </div>
-                        </div>
-                        <div class="flex items-start gap-3 p-1.5 hover:bg-yt-hover rounded-lg cursor-pointer" onclick="navigateTo('watch', 'clip_3')">
-                            <img src="https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80" class="w-8 h-8 rounded-full object-cover">
-                            <div>
-                                <p class="text-gray-200"><strong class="text-white">RadiantGamer</strong> is now LIVE with Valorant Ranked!</p>
-                                <span class="text-[10px] text-gray-400">1 hour ago</span>
+                                <p class="text-gray-200"><strong class="text-white">ViperSniper</strong> выложил новый мувик!</p>
+                                <span class="text-[10px] text-gray-400">10 минут назад</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Profile / Channel Avatar Link -->
-            <button onclick="navigateTo('channel')" class="flex items-center gap-2 p-0.5 hover:ring-2 ring-red-500 rounded-full transition-all" title="Your Channel">
-                <img id="headerUserAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80" alt="Channel Avatar" class="w-8 h-8 rounded-full object-cover">
-            </button>
+            <!-- Profile / Sign In Toggle Container -->
+            <div id="authNavContainer" class="relative">
+                <!-- Rendered dynamically via renderAuthUI() -->
+            </div>
         </div>
     </header>
 
-    <!-- App Body Container with Collapsible Sidebar -->
+    <!-- App Body Container -->
     <div class="flex flex-1 overflow-hidden relative">
 
         <aside id="mainSidebar" class="w-64 bg-[#0f0f0f] border-r border-yt-border flex flex-col shrink-0 transition-all duration-300 z-40 overflow-y-auto">
@@ -158,38 +151,38 @@
                 <!-- Primary Nav -->
                 <button onclick="navigateTo('home')" id="snav-home" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors bg-yt-hover text-white">
                     <i data-lucide="home" class="w-5 h-5 text-red-500"></i>
-                    <span class="sidebar-text">Home</span>
+                    <span class="sidebar-text">Главная</span>
                 </button>
                 <button onclick="navigateTo('shorts')" id="snav-shorts" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
                     <i data-lucide="zap" class="w-5 h-5 text-indigo-400"></i>
-                    <span class="sidebar-text">Shorts & Clips</span>
+                    <span class="sidebar-text">Shorts & Клипы</span>
                 </button>
                 <button onclick="navigateTo('home')" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
                     <i data-lucide="tv-2" class="w-5 h-5 text-gray-400"></i>
-                    <span class="sidebar-text">Subscriptions</span>
+                    <span class="sidebar-text">Подписки</span>
                 </button>
 
                 <hr class="border-yt-border my-2">
 
                 <!-- Library Section -->
-                <div class="px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-500 sidebar-text">You</div>
+                <div class="px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-500 sidebar-text">Вы</div>
                 <button onclick="navigateTo('channel')" id="snav-channel" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
                     <i data-lucide="user-square-2" class="w-5 h-5 text-gray-400"></i>
-                    <span class="sidebar-text">Your Channel</span>
+                    <span class="sidebar-text">Мой канал</span>
+                </button>
+                <button onclick="navigateTo('studio')" id="snav-studio" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
+                    <i data-lucide="sliders" class="w-5 h-5 text-gray-400"></i>
+                    <span class="sidebar-text">Настройки профиля</span>
                 </button>
                 <button onclick="filterBySection('history')" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
                     <i data-lucide="history" class="w-5 h-5 text-gray-400"></i>
-                    <span class="sidebar-text">History</span>
-                </button>
-                <button onclick="filterBySection('liked')" class="sidebar-item flex items-center gap-5 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
-                    <i data-lucide="thumbs-up" class="w-5 h-5 text-gray-400"></i>
-                    <span class="sidebar-text">Liked Videos</span>
+                    <span class="sidebar-text">История</span>
                 </button>
 
                 <hr class="border-yt-border my-2">
 
                 <!-- Trending Gaming Topics -->
-                <div class="px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-500 sidebar-text">Explore Gaming</div>
+                <div class="px-4 py-1 text-xs font-bold uppercase tracking-wider text-gray-500 sidebar-text">Игры</div>
                 <button onclick="filterByCategory('Valorant')" class="sidebar-item flex items-center gap-4 w-full px-4 py-2 rounded-xl text-sm text-gray-300 hover:bg-yt-hover hover:text-white transition-colors">
                     <span class="w-2 h-2 rounded-full bg-red-500"></span>
                     <span class="sidebar-text">Valorant</span>
@@ -213,14 +206,14 @@
             </div>
         </aside>
 
-        <!-- Main Dynamic Content Region -->
         <main class="flex-1 overflow-y-auto bg-[#0f0f0f] custom-scrollbar">
 
+            <!-- VIEW: Home -->
             <section id="viewHome" class="p-4 sm:p-6 space-y-6">
                 <!-- Category Pills Horizontal Scroll -->
                 <div class="flex items-center gap-2.5 overflow-x-auto pb-2 hide-scrollbar">
                     <button onclick="filterByCategory('All')" class="cat-pill active px-4 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all bg-white text-black">
-                        All
+                        Все
                     </button>
                     <button onclick="filterByCategory('Valorant')" class="cat-pill px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-yt-card hover:bg-yt-hover text-gray-200">
                         Valorant
@@ -238,7 +231,7 @@
                         Cyberpunk 2077
                     </button>
                     <button onclick="filterByCategory('Live')" class="cat-pill px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-yt-card hover:bg-yt-hover text-gray-200 flex items-center gap-1.5">
-                        <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span> Live Streams
+                        <span class="w-2 h-2 rounded-full bg-red-600 animate-pulse"></span> Прямой эфир
                     </button>
                 </div>
 
@@ -250,46 +243,40 @@
                 <!-- Empty State -->
                 <div id="emptyHomeState" class="hidden text-center py-20 bg-yt-card/50 rounded-3xl p-8 border border-yt-border">
                     <i data-lucide="video-off" class="w-16 h-16 text-gray-600 mx-auto mb-4"></i>
-                    <h3 class="text-lg font-bold text-gray-200">No videos match your filter</h3>
-                    <p class="text-gray-500 text-sm mt-1">Try selecting another gaming category or clearing your search query.</p>
+                    <h3 class="text-lg font-bold text-gray-200">Видео не найдены</h3>
+                    <p class="text-gray-500 text-sm mt-1">Попробуйте выбрать другую категорию или сбросить поиск.</p>
                 </div>
             </section>
 
+            <!-- VIEW: Watch Player -->
             <section id="viewWatch" class="hidden p-4 sm:p-6">
                 <div class="max-w-[1700px] mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Main Video Player & Details Column (2 Cols wide on desktop) -->
                     <div class="lg:col-span-2 space-y-4">
-                        <!-- HTML5 Video Player Box -->
                         <div class="relative bg-black rounded-2xl overflow-hidden aspect-video shadow-2xl border border-yt-border group">
                             <video id="mainVideoPlayer" class="w-full h-full object-contain" controls autoplay preload="metadata">
                                 <source id="mainVideoSource" src="" type="video/mp4">
-                                Your browser does not support video play.
+                                Ваш браузер не поддерживает видео.
                             </video>
                         </div>
 
-                        <!-- Video Title -->
-                        <h1 id="watchTitle" class="text-xl sm:text-2xl font-bold text-white tracking-tight">Video Title</h1>
+                        <h1 id="watchTitle" class="text-xl sm:text-2xl font-bold text-white tracking-tight">Название видео</h1>
 
-                        <!-- Creator Bar & Primary Actions -->
                         <div class="flex flex-wrap items-center justify-between gap-4 pb-2 border-b border-yt-border">
-                            <!-- Left: Channel Info & Subscribe -->
                             <div class="flex items-center gap-4">
                                 <img id="watchAuthorAvatar" src="" class="w-11 h-11 rounded-full object-cover cursor-pointer" onclick="navigateTo('channel')">
                                 <div>
                                     <div class="flex items-center gap-1 cursor-pointer" onclick="navigateTo('channel')">
-                                        <h3 id="watchAuthorName" class="font-bold text-base text-white hover:text-gray-200">Creator</h3>
+                                        <h3 id="watchAuthorName" class="font-bold text-base text-white hover:text-gray-200">Автор</h3>
                                         <i data-lucide="check-circle-2" class="w-4 h-4 text-indigo-400 fill-indigo-400/20"></i>
                                     </div>
-                                    <span id="watchSubCount" class="text-xs text-gray-400">1.2M subscribers</span>
+                                    <span id="watchSubCount" class="text-xs text-gray-400">1.2M подписчиков</span>
                                 </div>
                                 <button id="watchSubscribeBtn" onclick="toggleSubscribe()" class="ml-2 bg-white text-black hover:bg-gray-200 text-sm font-bold px-4 py-2 rounded-full transition-all active:scale-95">
-                                    Subscribe
+                                    Подписаться
                                 </button>
                             </div>
 
-                            <!-- Right: Likes, Share, Save Controls -->
                             <div class="flex items-center gap-2 overflow-x-auto">
-                                <!-- Like / Dislike pill -->
                                 <div class="flex items-center bg-yt-card rounded-full border border-yt-border overflow-hidden">
                                     <button onclick="toggleWatchLike()" id="watchLikeBtn" class="flex items-center gap-2 px-4 py-2 hover:bg-yt-hover text-sm font-medium text-gray-200 transition-colors">
                                         <i data-lucide="thumbs-up" id="watchLikeIcon" class="w-4 h-4"></i>
@@ -303,151 +290,234 @@
 
                                 <button onclick="openShareModal()" class="flex items-center gap-2 bg-yt-card hover:bg-yt-hover border border-yt-border px-4 py-2 rounded-full text-sm font-medium text-gray-200 transition-colors">
                                     <i data-lucide="share-2" class="w-4 h-4"></i>
-                                    <span>Share</span>
+                                    <span>Поделиться</span>
                                 </button>
 
                                 <button onclick="toggleWatchSave()" id="watchSaveBtn" class="flex items-center gap-2 bg-yt-card hover:bg-yt-hover border border-yt-border px-4 py-2 rounded-full text-sm font-medium text-gray-200 transition-colors">
                                     <i data-lucide="bookmark" id="watchSaveIcon" class="w-4 h-4"></i>
-                                    <span>Save</span>
+                                    <span>Сохранить</span>
                                 </button>
                             </div>
                         </div>
 
-                        <!-- Expandable Description Box -->
                         <div class="bg-yt-card hover:bg-yt-card/80 p-4 rounded-2xl border border-yt-border text-sm space-y-2 cursor-pointer transition-colors" onclick="this.classList.toggle('line-clamp-none')">
                             <div class="flex items-center gap-3 text-xs font-bold text-gray-300">
-                                <span id="watchViewCount">0 views</span>
-                                <span id="watchUploadDate">Recently uploaded</span>
-                                <span class="text-indigo-400">#GLYPH #Gaming #ClutchHighlights</span>
+                                <span id="watchViewCount">0 просмотров</span>
+                                <span id="watchUploadDate">Недавно</span>
+                                <span class="text-indigo-400">#GLYPH #Gaming #Clutch</span>
                             </div>
                             <p id="watchDescription" class="text-gray-300 leading-relaxed whitespace-pre-line">
-                                Video description goes here...
+                                Описание видео...
                             </p>
                         </div>
 
                         <!-- Comments Section -->
                         <div class="space-y-6 pt-4">
                             <div class="flex items-center gap-6">
-                                <h3 class="font-bold text-lg text-white"><span id="commentCountHeader">3</span> Comments</h3>
-                                <button class="flex items-center gap-2 text-xs font-semibold text-gray-400 hover:text-white">
-                                    <i data-lucide="arrow-down-up" class="w-4 h-4"></i>
-                                    Sort by
-                                </button>
+                                <h3 class="font-bold text-lg text-white"><span id="commentCountHeader">3</span> комментария</h3>
                             </div>
 
-                            <!-- Comment Input Form -->
                             <div class="flex items-start gap-3">
-                                <img id="commentInputAvatar" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&q=80" class="w-10 h-10 rounded-full object-cover">
+                                <img id="commentInputAvatar" src="" class="w-10 h-10 rounded-full object-cover bg-yt-card border border-yt-border">
                                 <div class="flex-1 space-y-2">
-                                    <input type="text" id="newCommentInput" placeholder="Add a comment..." class="w-full bg-transparent border-b border-yt-border focus:border-white text-sm py-1.5 focus:outline-none transition-colors text-gray-100">
+                                    <input type="text" id="newCommentInput" placeholder="Оставьте комментарий..." class="w-full bg-transparent border-b border-yt-border focus:border-white text-sm py-1.5 focus:outline-none transition-colors text-gray-100">
                                     <div class="flex justify-end gap-2">
-                                        <button onclick="document.getElementById('newCommentInput').value=''" class="px-3 py-1.5 hover:bg-yt-hover text-xs font-medium text-gray-300 rounded-full">Cancel</button>
-                                        <button onclick="postComment()" class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-full transition-all shadow-md">Comment</button>
+                                        <button onclick="document.getElementById('newCommentInput').value=''" class="px-3 py-1.5 hover:bg-yt-hover text-xs font-medium text-gray-300 rounded-full">Отмена</button>
+                                        <button onclick="postComment()" class="px-4 py-1.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-full transition-all shadow-md">Отправить</button>
                                     </div>
                                 </div>
                             </div>
 
-                            <!-- Active Comments List -->
-                            <div id="commentsList" class="space-y-4">
-                                <!-- Dynamic Comments Rendered Here -->
-                            </div>
+                            <div id="commentsList" class="space-y-4"></div>
                         </div>
                     </div>
 
-                    <!-- Right Sidebar: Up Next / Recommended Videos -->
+                    <!-- Right Column: Up Next -->
                     <div class="space-y-4">
-                        <div class="flex items-center justify-between">
-                            <h3 class="font-bold text-base text-white">Up Next</h3>
-                            <label class="flex items-center gap-2 text-xs text-gray-400 cursor-pointer">
-                                <span>Autoplay</span>
-                                <input type="checkbox" checked class="accent-red-600 rounded">
-                            </label>
-                        </div>
-
-                        <!-- Up Next List Container -->
-                        <div id="upNextList" class="space-y-3">
-                            <!-- Dynamic Up Next Cards -->
-                        </div>
+                        <h3 class="font-bold text-base text-white">Следующее</h3>
+                        <div id="upNextList" class="space-y-3"></div>
                     </div>
                 </div>
             </section>
 
+            <!-- VIEW: Channel Page -->
             <section id="viewChannel" class="hidden space-y-6 pb-12">
-                <!-- Channel Banner -->
-                <div class="h-44 sm:h-60 md:h-72 w-full relative overflow-hidden bg-gradient-to-r from-red-900 via-indigo-950 to-slate-900">
-                    <img id="channelBannerImg" src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80" class="w-full h-full object-cover opacity-60">
+                <div class="h-44 sm:h-60 md:h-72 w-full relative overflow-hidden bg-gradient-to-r from-red-900 via-indigo-950 to-slate-900 border-b border-yt-border">
+                    <img id="channelBannerImg" src="" class="w-full h-full object-cover">
                     <div class="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-transparent to-transparent"></div>
                 </div>
 
-                <!-- Channel Profile Header -->
                 <div class="max-w-7xl mx-auto px-4 sm:px-6">
                     <div class="flex flex-col md:flex-row items-center md:items-start justify-between gap-6 -mt-12 sm:-mt-16 relative z-10">
                         <div class="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
-                            <img id="channelAvatarImg" src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80" class="w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover ring-4 ring-[#0f0f0f] shadow-2xl">
+                            <img id="channelAvatarImg" src="" class="w-28 h-28 sm:w-36 sm:h-36 rounded-full object-cover ring-4 ring-[#0f0f0f] shadow-2xl bg-black">
                             <div class="space-y-1.5 pt-2">
                                 <div class="flex items-center justify-center md:justify-start gap-2">
-                                    <h1 id="channelDisplayName" class="text-2xl sm:text-3xl font-black text-white">GLYPH Official Pro</h1>
-                                    <i data-lucide="check-circle-2" class="w-6 h-6 text-red-500 fill-red-500/20" title="Verified Creator"></i>
+                                    <h1 id="channelDisplayName" class="text-2xl sm:text-3xl font-black text-white">Имя Канала</h1>
+                                    <i id="channelVerifiedBadge" data-lucide="check-circle-2" class="w-6 h-6 text-red-500 fill-red-500/20" title="Подтвержденный геймер"></i>
                                 </div>
-                                <p class="text-sm font-medium text-gray-400">@glyph_pro • <span id="channelSubscribers">1.2M subscribers</span> • <span id="channelVideoCount">14 videos</span></p>
-                                <p id="channelBio" class="text-xs sm:text-sm text-gray-300 max-w-xl">Home of competitive gaming highlights, Radiant Valorant plays, speedruns & high-FPS montages!</p>
+                                <p class="text-sm font-medium text-gray-400">
+                                    <span id="channelHandle">@handle</span> • 
+                                    <span id="channelSubscribers">1.2M подписчиков</span> • 
+                                    <span id="channelVideoCount">0 видео</span>
+                                </p>
+                                <p id="channelBio" class="text-xs sm:text-sm text-gray-300 max-w-xl">Описание канала...</p>
                             </div>
                         </div>
 
-                        <!-- Channel Action Buttons -->
                         <div class="flex items-center gap-3">
-                            <button onclick="openModal('editProfileModal')" class="bg-yt-card hover:bg-yt-hover border border-yt-border text-xs sm:text-sm font-bold px-4 py-2.5 rounded-full transition-all">
-                                Customize Channel
-                            </button>
-                            <button id="channelSubscribeBtn" onclick="toggleSubscribe()" class="bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-bold px-6 py-2.5 rounded-full shadow-lg shadow-red-600/30 transition-all">
-                                Subscribe
+                            <button onclick="navigateTo('studio')" class="bg-yt-card hover:bg-yt-hover border border-yt-border text-xs sm:text-sm font-bold px-5 py-2.5 rounded-full transition-all flex items-center gap-2 text-white">
+                                <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i>
+                                Настроить канал
                             </button>
                         </div>
                     </div>
 
                     <!-- Channel Navigation Tabs -->
                     <div class="flex items-center gap-8 border-b border-yt-border mt-8 overflow-x-auto hide-scrollbar text-sm font-bold text-gray-400">
-                        <button onclick="switchChannelTab('home')" id="ctab-home" class="channel-tab-btn pb-3 text-white border-b-2 border-red-500 whitespace-nowrap">Home</button>
-                        <button onclick="switchChannelTab('videos')" id="ctab-videos" class="channel-tab-btn pb-3 hover:text-white whitespace-nowrap">Videos</button>
-                        <button onclick="switchChannelTab('playlists')" id="ctab-playlists" class="channel-tab-btn pb-3 hover:text-white whitespace-nowrap">Playlists</button>
-                        <button onclick="switchChannelTab('community')" id="ctab-community" class="channel-tab-btn pb-3 hover:text-white whitespace-nowrap">Community</button>
-                        <button onclick="switchChannelTab('about')" id="ctab-about" class="channel-tab-btn pb-3 hover:text-white whitespace-nowrap">About</button>
+                        <button onclick="switchChannelTab('home')" id="ctab-home" class="channel-tab-btn pb-3 text-white border-b-2 border-red-500 whitespace-nowrap">Главная</button>
+                        <button onclick="switchChannelTab('videos')" id="ctab-videos" class="channel-tab-btn pb-3 hover:text-white whitespace-nowrap">Видео</button>
+                        <button onclick="switchChannelTab('about')" id="ctab-about" class="channel-tab-btn pb-3 hover:text-white whitespace-nowrap">О канале</button>
                     </div>
 
-                    <!-- Channel Tab Content Views -->
-                    <div id="channelTabContent" class="pt-6">
-                        <!-- Content rendered dynamically via switchChannelTab -->
+                    <div id="channelTabContent" class="pt-6"></div>
+                </div>
+            </section>
+
+            <!-- VIEW: Settings / YouTube Studio Style -->
+            <section id="viewStudio" class="hidden p-4 sm:p-8 max-w-6xl mx-auto space-y-8">
+                <div class="flex items-center justify-between border-b border-yt-border pb-5">
+                    <div>
+                        <h1 class="text-2xl font-black text-white flex items-center gap-3">
+                            <i data-lucide="sliders" class="w-7 h-7 text-red-500"></i>
+                            Настройка профиля и канала
+                        </h1>
+                        <p class="text-xs text-gray-400 mt-1">Управляйте внешним видом своего игрового профиля на GLYPH</p>
+                    </div>
+                    <button onclick="saveStudioProfile()" class="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white font-bold rounded-full shadow-lg shadow-red-600/30 transition-all flex items-center gap-2 text-sm">
+                        <i data-lucide="save" class="w-4 h-4"></i>
+                        Сохранить изменения
+                    </button>
+                </div>
+
+                <!-- Studio Tab Navigation -->
+                <div class="flex gap-4 border-b border-yt-border pb-2">
+                    <button onclick="switchStudioTab('basic')" id="stab-basic" class="studio-tab-btn px-4 py-2 rounded-xl text-sm font-bold bg-yt-card text-white border border-yt-border">
+                        Основные сведения
+                    </button>
+                    <button onclick="switchStudioTab('branding')" id="stab-branding" class="studio-tab-btn px-4 py-2 rounded-xl text-sm font-bold text-gray-400 hover:text-white hover:bg-yt-hover">
+                        Брендинг
+                    </button>
+                    <button onclick="switchStudioTab('account')" id="stab-account" class="studio-tab-btn px-4 py-2 rounded-xl text-sm font-bold text-gray-400 hover:text-white hover:bg-yt-hover">
+                        Аккаунт
+                    </button>
+                </div>
+
+                <!-- TAB 1: Basic Info -->
+                <div id="studioTabBasic" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">Имя канала (Display Name)</label>
+                            <input type="text" id="studioDisplayName" class="w-full bg-yt-card border border-yt-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500">
+                        </div>
+
+                        <div class="space-y-2">
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">Псевдоним (@handle)</label>
+                            <div class="flex items-center bg-yt-card border border-yt-border rounded-xl overflow-hidden focus-within:border-red-500">
+                                <span class="px-3 text-gray-500 font-bold">@</span>
+                                <input type="text" id="studioHandle" class="w-full bg-transparent py-3 pr-4 text-sm text-white focus:outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">Описание канала (Bio)</label>
+                        <textarea id="studioBio" rows="4" class="w-full bg-yt-card border border-yt-border rounded-xl p-4 text-sm text-white focus:outline-none focus:border-red-500" placeholder="Расскажите о своем игровом стиле, стримах..."></textarea>
+                    </div>
+
+                    <div class="space-y-2">
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400">Контактный Email</label>
+                        <input type="email" id="studioEmail" class="w-full bg-yt-card border border-yt-border rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-red-500">
+                    </div>
+                </div>
+
+                <!-- TAB 2: Branding -->
+                <div id="studioTabBranding" class="hidden space-y-8">
+                    <!-- Avatar Upload -->
+                    <div class="bg-yt-card border border-yt-border p-6 rounded-2xl flex flex-col sm:flex-row items-center gap-6">
+                        <img id="studioAvatarPreview" src="" class="w-24 h-24 rounded-full object-cover ring-2 ring-red-500 bg-black shrink-0">
+                        <div class="space-y-2 text-center sm:text-left flex-1">
+                            <h4 class="font-bold text-white text-base">Аватар профиля</h4>
+                            <p class="text-xs text-gray-400">Рекомендуется квадратное изображение не менее 98x98 пикселей в формате PNG или JPG.</p>
+                            <div class="flex flex-wrap gap-3 pt-2 justify-center sm:justify-start">
+                                <label class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-bold cursor-pointer transition-colors">
+                                    Загрузить
+                                    <input type="file" accept="image/*" class="hidden" onchange="handleImagePreview(event, 'studioAvatarPreview')">
+                                </label>
+                                <button type="button" onclick="resetStudioImage('avatar')" class="px-4 py-2 bg-yt-hover text-gray-300 rounded-xl text-xs font-bold">Сбросить</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Banner Upload -->
+                    <div class="bg-yt-card border border-yt-border p-6 rounded-2xl space-y-4">
+                        <div class="space-y-1">
+                            <h4 class="font-bold text-white text-base">Баннер канала</h4>
+                            <p class="text-xs text-gray-400">Отображается в верхней части вашего канала.</p>
+                        </div>
+                        <div class="h-32 w-full rounded-xl overflow-hidden bg-slate-900 border border-yt-border relative">
+                            <img id="studioBannerPreview" src="" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex gap-3">
+                            <label class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-xl text-xs font-bold cursor-pointer transition-colors">
+                                Изменить баннер
+                                <input type="file" accept="image/*" class="hidden" onchange="handleImagePreview(event, 'studioBannerPreview')">
+                            </label>
+                            <button type="button" onclick="resetStudioImage('banner')" class="px-4 py-2 bg-yt-hover text-gray-300 rounded-xl text-xs font-bold">Удалить</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: Account & Badges -->
+                <div id="studioTabAccount" class="hidden space-y-6">
+                    <div class="bg-yt-card border border-yt-border p-6 rounded-2xl space-y-4">
+                        <h4 class="font-bold text-white text-base flex items-center gap-2">
+                            <i data-lucide="shield-check" class="w-5 h-5 text-red-500"></i>
+                            Игровые статусы и бейджи
+                        </h4>
+                        <div class="flex items-center justify-between border-t border-yt-border pt-4">
+                            <div>
+                                <span class="font-bold text-sm text-white block">Значок "Verified Pro Gamer"</span>
+                                <span class="text-xs text-gray-400">Отображает красную галочку киберспортсмена возле вашего ника</span>
+                            </div>
+                            <input type="checkbox" id="studioVerifiedToggle" class="w-5 h-5 accent-red-600 rounded cursor-pointer">
+                        </div>
+                    </div>
+
+                    <div class="bg-yt-card border border-yt-border p-6 rounded-2xl space-y-4">
+                        <h4 class="font-bold text-white text-base flex items-center gap-2">
+                            <i data-lucide="key-round" class="w-5 h-5 text-indigo-400"></i>
+                            Пароль и Безопасность
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <input type="password" id="studioPassword" placeholder="Новый пароль" class="bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500">
+                            <input type="password" id="studioConfirmPassword" placeholder="Повторите новый пароль" class="bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-indigo-500">
+                        </div>
                     </div>
                 </div>
             </section>
 
+            <!-- VIEW: Shorts -->
             <section id="viewShorts" class="hidden p-4 flex justify-center min-h-[85vh]">
                 <div class="w-full max-w-sm bg-black rounded-3xl overflow-hidden border border-yt-border shadow-2xl relative flex flex-col justify-between">
                     <video id="shortsPlayer" src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" class="w-full h-full object-cover" autoplay loop muted></video>
-                    
-                    <!-- Overlay Overlay Controls -->
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-black/30 p-4 flex flex-col justify-between pointer-events-none">
                         <div class="flex justify-between items-center text-white pointer-events-auto">
                             <span class="text-xs font-bold bg-red-600 px-2.5 py-1 rounded-md uppercase tracking-wider">Shorts</span>
-                            <button onclick="toggleShortsMute()" class="p-2 bg-black/40 rounded-full hover:bg-black/60">
-                                <i data-lucide="volume-2" id="shortsMuteIcon" class="w-5 h-5"></i>
-                            </button>
                         </div>
-
                         <div class="space-y-3 pointer-events-auto">
-                            <div class="flex items-center gap-3">
-                                <img src="https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=120&q=80" class="w-10 h-10 rounded-full ring-2 ring-red-500">
-                                <div>
-                                    <p class="font-bold text-sm text-white">@ViperSniper</p>
-                                    <p class="text-xs text-gray-300">1v5 AWP Noscope Fast Flick!</p>
-                                </div>
-                            </div>
-
-                            <div class="flex justify-between items-center pt-2 border-t border-white/20">
-                                <button onclick="nextShort()" class="w-full py-2 bg-white/20 hover:bg-white/30 text-white rounded-xl font-bold text-xs backdrop-blur-md">
-                                    Next Short Clip ➔
-                                </button>
-                            </div>
+                            <p class="font-bold text-sm text-white">@ViperSniper</p>
+                            <p class="text-xs text-gray-300">1v5 AWP Noscope Fast Flick!</p>
                         </div>
                     </div>
                 </div>
@@ -455,7 +525,63 @@
         </main>
     </div>
 
-    
+    <!-- AUTH MODAL (Registration & Sign In) -->
+    <div id="authModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+        <div class="bg-yt-card w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-yt-border">
+            <button onclick="closeModal('authModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-yt-hover">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="text-center space-y-2">
+                <div class="w-12 h-12 mx-auto rounded-2xl bg-gradient-to-tr from-red-600 to-indigo-600 p-[2px] flex items-center justify-center shadow-lg shadow-red-600/30">
+                    <div class="w-full h-full bg-black rounded-[14px] flex items-center justify-center">
+                        <i data-lucide="user-plus" id="authHeaderIcon" class="w-6 h-6 text-red-500"></i>
+                    </div>
+                </div>
+                <h3 id="authModalTitle" class="text-2xl font-black text-white">Регистрация в GLYPH</h3>
+                <p id="authModalSubtitle" class="text-xs text-gray-400">Создайте игровой профиль, чтобы выкладывать клипы и комментировать</p>
+            </div>
+
+            <!-- Auth Form -->
+            <form id="authForm" onsubmit="handleAuthSubmit(event)" class="space-y-4">
+                <!-- Registration Specific Fields -->
+                <div id="regFields" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Имя профиля</label>
+                        <input type="text" id="authDisplayName" placeholder="например, CyberGamer" class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Псевдоним (@handle)</label>
+                        <input type="text" id="authHandle" placeholder="cybergamer" class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+                    </div>
+                </div>
+
+                <!-- Common Email & Password -->
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Email</label>
+                    <input type="email" id="authEmail" required placeholder="gamer@glyph.tv" class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Пароль</label>
+                    <input type="password" id="authPassword" required placeholder="••••••••" class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+                </div>
+
+                <button type="submit" id="authSubmitBtn" class="w-full py-3 bg-red-600 hover:bg-red-500 text-white font-bold text-sm rounded-xl shadow-lg shadow-red-600/30 transition-all">
+                    Зарегистрироваться
+                </button>
+            </form>
+
+            <!-- Mode Switch Footer -->
+            <div class="text-center pt-2 border-t border-yt-border">
+                <button onclick="toggleAuthMode()" id="authSwitchBtn" class="text-xs text-indigo-400 font-bold hover:underline">
+                    Уже есть аккаунт? Войти
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Upload Clip Modal -->
     <div id="uploadModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
         <div class="bg-yt-card w-full max-w-lg rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-yt-border">
@@ -467,19 +593,19 @@
                     <i data-lucide="upload-cloud" class="w-6 h-6"></i>
                 </div>
                 <div>
-                    <h3 class="text-xl font-bold text-white">Upload Gaming Video</h3>
-                    <p class="text-xs text-gray-400">Share your gameplay, clutches, or speedrun clips with GLYPH</p>
+                    <h3 class="text-xl font-bold text-white">Опубликовать игровое видео</h3>
+                    <p class="text-xs text-gray-400">Поделитесь вашим клатчем или стримом</p>
                 </div>
             </div>
 
             <form id="uploadForm" onsubmit="handleUploadSubmit(event)" class="space-y-4">
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Title</label>
-                    <input type="text" id="uploadTitle" required placeholder="e.g., Epic 1v4 Ace Clutch in Valorant" class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-red-500">
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Название видео</label>
+                    <input type="text" id="uploadTitle" required placeholder="например, Эпичный эйс 1в5 в Valorant!" class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-red-500">
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Game Tag</label>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Категория игры</label>
                     <select id="uploadCategory" required class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-red-500">
                         <option value="Valorant">Valorant</option>
                         <option value="CS2">CS2</option>
@@ -490,53 +616,13 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Description</label>
-                    <textarea id="uploadDescription" rows="3" placeholder="Tell viewers about your clip..." class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-red-500"></textarea>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Video File / URL Sample</label>
-                    <input type="file" id="uploadFile" accept="video/*" class="w-full text-xs text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-red-600 file:text-white hover:file:bg-red-500 cursor-pointer bg-[#0f0f0f] rounded-xl border border-yt-border">
-                </div>
-
-                <!-- Live Upload Progress -->
-                <div id="uploadProgressBox" class="hidden space-y-1.5 pt-2">
-                    <div class="flex justify-between text-xs text-gray-400">
-                        <span>Uploading & Processing HD Clip...</span>
-                        <span id="uploadPercent">0%</span>
-                    </div>
-                    <div class="w-full bg-yt-border rounded-full h-2 overflow-hidden">
-                        <div id="uploadBar" class="bg-red-600 h-full w-0 transition-all duration-300"></div>
-                    </div>
+                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1.5">Описание</label>
+                    <textarea id="uploadDescription" rows="3" placeholder="Расскажите об этой моменте..." class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100 focus:outline-none focus:border-red-500"></textarea>
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-yt-border">
-                    <button type="button" onclick="closeModal('uploadModal')" class="px-5 py-2.5 bg-yt-hover rounded-xl text-xs font-bold text-gray-300">Cancel</button>
-                    <button type="submit" class="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-red-600/30">Publish Video</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Edit Profile Modal -->
-    <div id="editProfileModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-        <div class="bg-yt-card w-full max-w-md rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl relative border border-yt-border">
-            <button onclick="closeModal('editProfileModal')" class="absolute top-5 right-5 text-gray-400 hover:text-white p-2 rounded-xl hover:bg-yt-hover">
-                <i data-lucide="x" class="w-5 h-5"></i>
-            </button>
-            <h3 class="text-xl font-bold text-white">Customize Channel</h3>
-            <form onsubmit="handleChannelUpdate(event)" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Channel Name</label>
-                    <input type="text" id="editChannelName" required class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold uppercase text-gray-400 mb-1">Channel Bio</label>
-                    <textarea id="editChannelBio" rows="3" class="w-full bg-[#0f0f0f] border border-yt-border rounded-xl px-4 py-2.5 text-sm text-gray-100"></textarea>
-                </div>
-                <div class="flex justify-end gap-3 pt-4">
-                    <button type="button" onclick="closeModal('editProfileModal')" class="px-4 py-2 bg-yt-hover rounded-xl text-xs font-bold">Cancel</button>
-                    <button type="submit" class="px-5 py-2 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl">Save</button>
+                    <button type="button" onclick="closeModal('uploadModal')" class="px-5 py-2.5 bg-yt-hover rounded-xl text-xs font-bold text-gray-300">Отмена</button>
+                    <button type="submit" class="px-6 py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-red-600/30">Опубликовать</button>
                 </div>
             </form>
         </div>
@@ -548,30 +634,34 @@
             <button onclick="closeModal('shareModal')" class="absolute top-4 right-4 text-gray-400 hover:text-white">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            <h3 class="text-lg font-bold text-white">Share Video</h3>
+            <h3 class="text-lg font-bold text-white">Поделиться видео</h3>
             <div class="flex items-center bg-[#0f0f0f] border border-yt-border rounded-xl p-2 gap-2">
                 <input type="text" id="shareUrlInput" readonly value="https://glyph.tv/watch?v=clip_1" class="w-full bg-transparent text-xs text-gray-300 focus:outline-none">
-                <button onclick="copyShareUrl()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold">Copy</button>
+                <button onclick="copyShareUrl()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg text-xs font-bold">Скопировать</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Central Data Store
+        // Central Data State with LocalStorage Persistence
+        const DEFAULT_USER = {
+            isLoggedIn: true,
+            name: 'GLYPH Official Pro',
+            handle: 'glyph_pro',
+            email: 'pro@glyph.tv',
+            subscribers: '1.2M',
+            verified: true,
+            avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80',
+            banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80',
+            bio: 'Официальный канал платформы GLYPH. Турниры, киберспорт, мувики и гайды!'
+        };
+
         const appData = {
             activeView: 'home',
             activeCategory: 'All',
             activeVideoId: 'clip_1',
-            sidebarCollapsed: false,
-            userChannel: {
-                name: 'GLYPH Official Pro',
-                handle: '@glyph_pro',
-                subscribers: '1.2M subscribers',
-                videosCount: 14,
-                avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80',
-                banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80',
-                bio: 'Home of competitive gaming highlights, Radiant Valorant plays, speedruns & high-FPS montages!'
-            },
+            authMode: 'register', // 'register' or 'login'
+            currentUser: JSON.parse(localStorage.getItem('glyph_user')) || DEFAULT_USER,
             videos: [
                 {
                     id: 'clip_1',
@@ -581,13 +671,10 @@
                     thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
                     author: 'ViperSniper',
                     authorAvatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?auto=format&fit=crop&w=150&q=80',
-                    views: '142K views',
-                    viewsCount: 142000,
-                    uploadDate: '3 hours ago',
+                    views: '142K просмотров',
+                    uploadDate: '3 часа назад',
                     likes: 12400,
-                    liked: false,
-                    saved: false,
-                    description: 'Check out this insane 1v4 AWP clutch during the final overtime round on Inferno B site! Sub for daily gaming highlights.'
+                    description: 'Сумасшедшая защита B-плента в клатче 1v4!'
                 },
                 {
                     id: 'clip_2',
@@ -597,13 +684,10 @@
                     thumbnail: 'https://images.unsplash.com/photo-1627856013091-fed6e4e30025?auto=format&fit=crop&w=800&q=80',
                     author: 'BlockMaster',
                     authorAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&q=80',
-                    views: '89K views',
-                    viewsCount: 89000,
-                    uploadDate: '12 hours ago',
+                    views: '89K просмотров',
+                    uploadDate: '12 часов назад',
                     likes: 8300,
-                    liked: false,
-                    saved: false,
-                    description: 'Sub-10 minute Nether entry using the new blinded bastion navigation trick. Seeds in description.'
+                    description: 'Рекордный спидран в Майнкрафте.'
                 },
                 {
                     id: 'clip_3',
@@ -613,13 +697,10 @@
                     thumbnail: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80',
                     author: 'RadiantGamer',
                     authorAvatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80',
-                    views: '310K views',
-                    viewsCount: 310000,
-                    uploadDate: '1 day ago',
+                    views: '310K просмотров',
+                    uploadDate: '1 день назад',
                     likes: 29500,
-                    liked: false,
-                    saved: false,
-                    description: 'High sensory Valorant gameplay montage featuring crisp operator flicks and dash entries on Ascent & Bind.'
+                    description: 'Монтаж эйсов на ранге Radiant.'
                 },
                 {
                     id: 'clip_4',
@@ -629,31 +710,210 @@
                     thumbnail: 'https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?auto=format&fit=crop&w=800&q=80',
                     author: 'NeonRider',
                     authorAvatar: 'https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=150&q=80',
-                    views: '45K views',
-                    viewsCount: 45000,
-                    uploadDate: '2 days ago',
+                    views: '45K просмотров',
+                    uploadDate: '2 дня назад',
                     likes: 4100,
-                    liked: false,
-                    saved: false,
-                    description: 'Unstoppable Sandevistan melee tech build for Dogtown missions. Complete skill tree breakdown.'
+                    description: 'Лучший технический билдинг в Dogtown.'
                 }
             ],
             comments: [
-                { id: 'c1', author: 'EsportsFan99', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80', text: 'That second kill flick was absolutely dirty! 🔥', likes: 24, time: '2 hours ago' },
-                { id: 'c2', author: 'GlitchHunter', avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=80&q=80', text: 'Insane reaction time. Subscribed right away!', likes: 8, time: '1 hour ago' }
+                { id: 'c1', author: 'EsportsFan99', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=80&q=80', text: 'Флик с авп просто пушка! 🔥', time: '2 часа назад' }
             ]
         };
+
+        function renderAuthUI() {
+            const container = document.getElementById('authNavContainer');
+            const user = appData.currentUser;
+
+            if (user && user.isLoggedIn) {
+                container.innerHTML = `
+                    <div class="relative">
+                        <button onclick="toggleUserMenu()" class="flex items-center gap-2 p-0.5 hover:ring-2 ring-red-500 rounded-full transition-all" title="Мой профиль">
+                            <img src="${user.avatar}" class="w-8 h-8 rounded-full object-cover bg-yt-card">
+                        </button>
+
+                        <div id="userDropdown" class="hidden absolute right-0 mt-2 w-64 bg-yt-card border border-yt-border rounded-2xl shadow-2xl p-3 z-50 space-y-2">
+                            <div class="flex items-center gap-3 p-2 border-b border-yt-border">
+                                <img src="${user.avatar}" class="w-10 h-10 rounded-full object-cover">
+                                <div class="overflow-hidden">
+                                    <h4 class="font-bold text-sm text-white truncate">${user.name}</h4>
+                                    <p class="text-xs text-gray-400 truncate">@${user.handle}</p>
+                                </div>
+                            </div>
+
+                            <button onclick="navigateTo('channel'); toggleUserMenu();" class="flex items-center gap-3 w-full px-3 py-2 text-xs font-semibold text-gray-200 hover:bg-yt-hover rounded-xl transition-colors">
+                                <i data-lucide="user-square-2" class="w-4 h-4 text-indigo-400"></i>
+                                Мой канал
+                            </button>
+                            <button onclick="navigateTo('studio'); toggleUserMenu();" class="flex items-center gap-3 w-full px-3 py-2 text-xs font-semibold text-gray-200 hover:bg-yt-hover rounded-xl transition-colors">
+                                <i data-lucide="sliders" class="w-4 h-4 text-red-500"></i>
+                                Настройки профиля
+                            </button>
+                            <hr class="border-yt-border">
+                            <button onclick="logoutUser()" class="flex items-center gap-3 w-full px-3 py-2 text-xs font-semibold text-red-400 hover:bg-yt-hover rounded-xl transition-colors">
+                                <i data-lucide="log-out" class="w-4 h-4"></i>
+                                Выйти
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal('login')" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs sm:text-sm font-bold px-4 py-2 rounded-full transition-all shadow-md">
+                        <i data-lucide="log-in" class="w-4 h-4"></i>
+                        <span>Войти</span>
+                    </button>
+                `;
+            }
+            lucide.createIcons();
+        }
+
+        function toggleUserMenu() {
+            const menu = document.getElementById('userDropdown');
+            if (menu) menu.classList.toggle('hidden');
+        }
+
+        function openAuthModal(mode = 'register') {
+            appData.authMode = mode;
+            const modal = document.getElementById('authModal');
+            const regFields = document.getElementById('regFields');
+            const title = document.getElementById('authModalTitle');
+            const subtitle = document.getElementById('authModalSubtitle');
+            const submitBtn = document.getElementById('authSubmitBtn');
+            const switchBtn = document.getElementById('authSwitchBtn');
+
+            if (mode === 'register') {
+                regFields.classList.remove('hidden');
+                title.innerText = 'Регистрация в GLYPH';
+                subtitle.innerText = 'Создайте игровой профиль, чтобы выкладывать клипы';
+                submitBtn.innerText = 'Зарегистрироваться';
+                switchBtn.innerText = 'Уже есть аккаунт? Войти';
+            } else {
+                regFields.classList.add('hidden');
+                title.innerText = 'Вход в GLYPH';
+                subtitle.innerText = 'Введите свой email и пароль для входа';
+                submitBtn.innerText = 'Войти в аккаунт';
+                switchBtn.innerText = 'Нет аккаунта? Зарегистрироваться';
+            }
+
+            modal.classList.remove('hidden');
+            lucide.createIcons();
+        }
+
+        function toggleAuthMode() {
+            openAuthModal(appData.authMode === 'register' ? 'login' : 'register');
+        }
+
+        function handleAuthSubmit(e) {
+            e.preventDefault();
+            const email = document.getElementById('authEmail').value;
+
+            if (appData.authMode === 'register') {
+                const name = document.getElementById('authDisplayName').value || 'Новый Геймер';
+                const handle = document.getElementById('authHandle').value || 'gamer_' + Math.floor(Math.random()*1000);
+
+                appData.currentUser = {
+                    isLoggedIn: true,
+                    name: name,
+                    handle: handle,
+                    email: email,
+                    subscribers: '0',
+                    verified: false,
+                    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=300&q=80',
+                    banner: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=1600&q=80',
+                    bio: 'Добро пожаловать на мой игровой канал GLYPH!'
+                };
+                showToast('Успешная регистрация!');
+            } else {
+                appData.currentUser.isLoggedIn = true;
+                showToast('С возвращением!');
+            }
+
+            localStorage.setItem('glyph_user', JSON.stringify(appData.currentUser));
+            closeModal('authModal');
+            renderAuthUI();
+            updateChannelUI();
+        }
+
+        function logoutUser() {
+            appData.currentUser.isLoggedIn = false;
+            localStorage.setItem('glyph_user', JSON.stringify(appData.currentUser));
+            renderAuthUI();
+            showToast('Вы вышли из системы');
+        }
+
+        function loadStudioData() {
+            const u = appData.currentUser;
+            document.getElementById('studioDisplayName').value = u.name;
+            document.getElementById('studioHandle').value = u.handle;
+            document.getElementById('studioBio').value = u.bio;
+            document.getElementById('studioEmail').value = u.email;
+            document.getElementById('studioAvatarPreview').src = u.avatar;
+            document.getElementById('studioBannerPreview').src = u.banner;
+            document.getElementById('studioVerifiedToggle').checked = u.verified;
+        }
+
+        function switchStudioTab(tab) {
+            ['basic', 'branding', 'account'].forEach(t => {
+                document.getElementById(`studioTab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('hidden');
+                document.getElementById(`stab-${t}`).className = "studio-tab-btn px-4 py-2 rounded-xl text-sm font-bold text-gray-400 hover:text-white hover:bg-yt-hover";
+            });
+
+            document.getElementById(`studioTab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.remove('hidden');
+            document.getElementById(`stab-${tab}`).className = "studio-tab-btn px-4 py-2 rounded-xl text-sm font-bold bg-yt-card text-white border border-yt-border";
+        }
+
+        function handleImagePreview(event, previewElementId) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById(previewElementId).src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveStudioProfile() {
+            const u = appData.currentUser;
+            u.name = document.getElementById('studioDisplayName').value;
+            u.handle = document.getElementById('studioHandle').value;
+            u.bio = document.getElementById('studioBio').value;
+            u.email = document.getElementById('studioEmail').value;
+            u.avatar = document.getElementById('studioAvatarPreview').src;
+            u.banner = document.getElementById('studioBannerPreview').src;
+            u.verified = document.getElementById('studioVerifiedToggle').checked;
+
+            localStorage.setItem('glyph_user', JSON.stringify(u));
+            renderAuthUI();
+            updateChannelUI();
+            showToast('Настройки профиля сохранены!');
+        }
+
+        function updateChannelUI() {
+            const u = appData.currentUser;
+            document.getElementById('channelDisplayName').innerText = u.name;
+            document.getElementById('channelHandle').innerText = '@' + u.handle;
+            document.getElementById('channelBio').innerText = u.bio;
+            document.getElementById('channelSubscribers').innerText = u.subscribers + ' подписчиков';
+            document.getElementById('channelAvatarImg').src = u.avatar;
+            document.getElementById('channelBannerImg').src = u.banner;
+
+            const badge = document.getElementById('channelVerifiedBadge');
+            if (u.verified) badge.classList.remove('hidden');
+            else badge.classList.add('hidden');
+
+            const commentAvatar = document.getElementById('commentInputAvatar');
+            if (commentAvatar) commentAvatar.src = u.avatar;
+        }
 
         // Navigation Router
         function navigateTo(view, videoId = null) {
             appData.activeView = view;
-
-            // Hide all views
-            ['viewHome', 'viewWatch', 'viewChannel', 'viewShorts'].forEach(id => {
+            ['viewHome', 'viewWatch', 'viewChannel', 'viewStudio', 'viewShorts'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
 
-            // Update sidebar buttons
             document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('bg-yt-hover', 'text-white'));
 
             if (view === 'home') {
@@ -664,9 +924,14 @@
                 document.getElementById('viewWatch').classList.remove('hidden');
                 if (videoId) loadWatchVideo(videoId);
             } else if (view === 'channel') {
+                updateChannelUI();
                 document.getElementById('viewChannel').classList.remove('hidden');
                 document.getElementById('snav-channel')?.classList.add('bg-yt-hover', 'text-white');
                 switchChannelTab('home');
+            } else if (view === 'studio') {
+                loadStudioData();
+                document.getElementById('viewStudio').classList.remove('hidden');
+                document.getElementById('snav-studio')?.classList.add('bg-yt-hover', 'text-white');
             } else if (view === 'shorts') {
                 document.getElementById('viewShorts').classList.remove('hidden');
                 document.getElementById('snav-shorts')?.classList.add('bg-yt-hover', 'text-white');
@@ -676,15 +941,11 @@
             lucide.createIcons();
         }
 
-        // Render Home Grid
         function renderHomeGrid() {
             const grid = document.getElementById('homeVideoGrid');
             const empty = document.getElementById('emptyHomeState');
 
-            const filtered = appData.videos.filter(v => {
-                const matchCat = appData.activeCategory === 'All' || v.category === appData.activeCategory;
-                return matchCat;
-            });
+            const filtered = appData.videos.filter(v => appData.activeCategory === 'All' || v.category === appData.activeCategory);
 
             if (filtered.length === 0) {
                 grid.innerHTML = '';
@@ -693,15 +954,12 @@
                 empty.classList.add('hidden');
                 grid.innerHTML = filtered.map(video => `
                     <div class="space-y-3 cursor-pointer group" onclick="navigateTo('watch', '${video.id}')">
-                        <!-- Thumbnail -->
                         <div class="relative aspect-video rounded-2xl overflow-hidden bg-yt-card border border-yt-border">
                             <img src="${video.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                             <span class="absolute bottom-2 right-2 bg-black/80 backdrop-blur-md text-white text-[11px] font-bold px-2 py-0.5 rounded">
                                 ${video.category}
                             </span>
                         </div>
-
-                        <!-- Info details -->
                         <div class="flex gap-3">
                             <img src="${video.authorAvatar}" class="w-9 h-9 rounded-full object-cover shrink-0 mt-0.5">
                             <div class="space-y-1">
@@ -723,7 +981,6 @@
             lucide.createIcons();
         }
 
-        // Load Video Watch Page
         function loadWatchVideo(videoId) {
             appData.activeVideoId = videoId;
             const video = appData.videos.find(v => v.id === videoId) || appData.videos[0];
@@ -746,14 +1003,11 @@
             renderComments();
         }
 
-        // Up Next Video List
         function renderUpNextList(currentId) {
-            const upNextContainer = document.getElementById('upNextList');
             const nextVideos = appData.videos.filter(v => v.id !== currentId);
-
-            upNextContainer.innerHTML = nextVideos.map(v => `
+            document.getElementById('upNextList').innerHTML = nextVideos.map(v => `
                 <div class="flex gap-3 group cursor-pointer" onclick="navigateTo('watch', '${v.id}')">
-                    <div class="relative w-40 aspect-video rounded-xl overflow-hidden bg-yt-card shrink-0">
+                    <div class="relative w-40 aspect-video rounded-xl overflow-hidden bg-yt-card shrink-0 border border-yt-border">
                         <img src="${v.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     </div>
                     <div class="space-y-1 py-0.5">
@@ -766,12 +1020,9 @@
             lucide.createIcons();
         }
 
-        // Render Comments
         function renderComments() {
-            const list = document.getElementById('commentsList');
             document.getElementById('commentCountHeader').innerText = appData.comments.length;
-
-            list.innerHTML = appData.comments.map(c => `
+            document.getElementById('commentsList').innerHTML = appData.comments.map(c => `
                 <div class="flex items-start gap-3 text-sm">
                     <img src="${c.avatar}" class="w-8 h-8 rounded-full object-cover">
                     <div class="space-y-1">
@@ -780,17 +1031,9 @@
                             <span class="text-[10px] text-gray-500">${c.time}</span>
                         </div>
                         <p class="text-xs text-gray-300">${c.text}</p>
-                        <div class="flex items-center gap-4 text-xs text-gray-400 pt-1">
-                            <button onclick="this.querySelector('span').innerText = parseInt(this.querySelector('span').innerText)+1" class="flex items-center gap-1 hover:text-white">
-                                <i data-lucide="thumbs-up" class="w-3.5 h-3.5"></i>
-                                <span>${c.likes}</span>
-                            </button>
-                            <button class="hover:text-white">Reply</button>
-                        </div>
                     </div>
                 </div>
             `).join('');
-            lucide.createIcons();
         }
 
         function postComment() {
@@ -799,32 +1042,28 @@
 
             appData.comments.unshift({
                 id: 'c_' + Date.now(),
-                author: appData.userChannel.name,
-                avatar: appData.userChannel.avatar,
+                author: appData.currentUser.name,
+                avatar: appData.currentUser.avatar,
                 text: input.value.trim(),
-                likes: 0,
-                time: 'Just now'
+                time: 'Только что'
             });
 
             input.value = '';
             renderComments();
+            showToast('Комментарий добавлен!');
         }
 
-        // Channel Tab Switching
         function switchChannelTab(tab) {
-            document.querySelectorAll('.channel-tab-btn').forEach(b => {
-                b.classList.remove('text-white', 'border-b-2', 'border-red-500');
-            });
+            document.querySelectorAll('.channel-tab-btn').forEach(b => b.classList.remove('text-white', 'border-b-2', 'border-red-500'));
             document.getElementById(`ctab-${tab}`)?.classList.add('text-white', 'border-b-2', 'border-red-500');
 
             const content = document.getElementById('channelTabContent');
-
             if (tab === 'home' || tab === 'videos') {
                 content.innerHTML = `
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         ${appData.videos.map(v => `
                             <div class="space-y-2 cursor-pointer group" onclick="navigateTo('watch', '${v.id}')">
-                                <div class="relative aspect-video rounded-2xl overflow-hidden bg-yt-card">
+                                <div class="relative aspect-video rounded-2xl overflow-hidden bg-yt-card border border-yt-border">
                                     <img src="${v.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 </div>
                                 <h4 class="font-bold text-sm text-white group-hover:text-indigo-400 line-clamp-1">${v.title}</h4>
@@ -833,144 +1072,47 @@
                         `).join('')}
                     </div>
                 `;
-            } else if (tab === 'playlists') {
-                content.innerHTML = `
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div class="bg-yt-card border border-yt-border p-4 rounded-2xl space-y-2">
-                            <div class="aspect-video bg-red-900/40 rounded-xl flex items-center justify-center">
-                                <i data-lucide="play-square" class="w-10 h-10 text-red-500"></i>
-                            </div>
-                            <h4 class="font-bold text-sm text-white">Best Ace Clutch Montages</h4>
-                            <p class="text-xs text-gray-400">8 videos</p>
-                        </div>
-                    </div>
-                `;
-            } else if (tab === 'community') {
-                content.innerHTML = `
-                    <div class="max-w-2xl bg-yt-card border border-yt-border p-6 rounded-2xl space-y-4">
-                        <div class="flex items-center gap-3">
-                            <img src="${appData.userChannel.avatar}" class="w-10 h-10 rounded-full">
-                            <div>
-                                <h4 class="font-bold text-sm text-white">${appData.userChannel.name}</h4>
-                                <span class="text-xs text-gray-500">2 days ago</span>
-                            </div>
-                        </div>
-                        <p class="text-sm text-gray-200">What game should we stream next for the 1.2M Subscriber Special?</p>
-                        <div class="space-y-2 text-xs">
-                            <div class="p-3 bg-[#0f0f0f] border border-yt-border rounded-xl font-medium cursor-pointer hover:border-red-500">🎮 Valorant Ranked Grind</div>
-                            <div class="p-3 bg-[#0f0f0f] border border-yt-border rounded-xl font-medium cursor-pointer hover:border-red-500">⛏️ Minecraft Hardcore Survival</div>
-                        </div>
-                    </div>
-                `;
             } else if (tab === 'about') {
                 content.innerHTML = `
                     <div class="bg-yt-card border border-yt-border p-6 rounded-2xl max-w-2xl space-y-4 text-sm text-gray-300">
-                        <h3 class="font-bold text-base text-white">Channel Details</h3>
-                        <p>${appData.userChannel.bio}</p>
-                        <hr class="border-yt-border">
-                        <div class="grid grid-cols-2 gap-4 text-xs">
-                            <div><strong>Joined:</strong> Nov 2023</div>
-                            <div><strong>Total Views:</strong> 12,480,192</div>
-                            <div><strong>Location:</strong> United States</div>
-                        </div>
+                        <h3 class="font-bold text-base text-white">Описание</h3>
+                        <p>${appData.currentUser.bio}</p>
                     </div>
                 `;
             }
             lucide.createIcons();
         }
 
-        // Global Action Handlers
+        // Global Toast Notification Helper
+        function showToast(message) {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = 'bg-yt-card border border-yt-border text-white px-4 py-3 rounded-2xl shadow-2xl flex items-center gap-3 animate-bounce';
+            toast.innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-red-500"></i><span class="text-xs font-bold">${message}</span>`;
+            container.appendChild(toast);
+            lucide.createIcons();
+            setTimeout(() => toast.remove(), 3000);
+        }
+
         function filterByCategory(cat) {
             appData.activeCategory = cat;
-            document.querySelectorAll('.cat-pill').forEach(b => {
-                if (b.innerText.includes(cat)) {
-                    b.className = "cat-pill active px-4 py-1.5 rounded-lg text-sm font-semibold whitespace-nowrap transition-all bg-white text-black";
-                } else {
-                    b.className = "cat-pill px-4 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all bg-yt-card hover:bg-yt-hover text-gray-200";
-                }
-            });
             if (appData.activeView !== 'home') navigateTo('home');
             renderHomeGrid();
         }
 
         function handleSearch(val) {
             const query = val.toLowerCase().trim();
+            const filtered = appData.videos.filter(v => v.title.toLowerCase().includes(query) || v.category.toLowerCase().includes(query));
             const grid = document.getElementById('homeVideoGrid');
-
-            const filtered = appData.videos.filter(v => 
-                v.title.toLowerCase().includes(query) || 
-                v.category.toLowerCase().includes(query) ||
-                v.author.toLowerCase().includes(query)
-            );
-
             grid.innerHTML = filtered.map(v => `
                 <div class="space-y-3 cursor-pointer group" onclick="navigateTo('watch', '${v.id}')">
-                    <div class="relative aspect-video rounded-2xl overflow-hidden bg-yt-card">
+                    <div class="relative aspect-video rounded-2xl overflow-hidden bg-yt-card border border-yt-border">
                         <img src="${v.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                     </div>
                     <h3 class="font-bold text-sm text-gray-100 group-hover:text-indigo-400 line-clamp-2">${v.title}</h3>
-                    <p class="text-xs text-gray-400">${v.author} • ${v.views}</p>
                 </div>
             `).join('');
             lucide.createIcons();
-        }
-
-        function handleUploadSubmit(e) {
-            e.preventDefault();
-            const title = document.getElementById('uploadTitle').value;
-            const category = document.getElementById('uploadCategory').value;
-            const desc = document.getElementById('uploadDescription').value;
-
-            const progressBox = document.getElementById('uploadProgressBox');
-            const bar = document.getElementById('uploadBar');
-            const percent = document.getElementById('uploadPercent');
-
-            progressBox.classList.remove('hidden');
-
-            let p = 0;
-            const interval = setInterval(() => {
-                p += 25;
-                bar.style.width = `${p}%`;
-                percent.innerText = `${p}%`;
-
-                if (p >= 100) {
-                    clearInterval(interval);
-                    appData.videos.unshift({
-                        id: 'clip_' + Date.now(),
-                        title: title,
-                        category: category,
-                        videoUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
-                        thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
-                        author: appData.userChannel.name,
-                        authorAvatar: appData.userChannel.avatar,
-                        views: '1 view',
-                        viewsCount: 1,
-                        uploadDate: 'Just now',
-                        likes: 1,
-                        description: desc
-                    });
-
-                    closeModal('uploadModal');
-                    progressBox.classList.add('hidden');
-                    bar.style.width = '0%';
-                    document.getElementById('uploadForm').reset();
-                    navigateTo('home');
-                }
-            }, 200);
-        }
-
-        function toggleSubscribe() {
-            const btns = [document.getElementById('watchSubscribeBtn'), document.getElementById('channelSubscribeBtn')];
-            btns.forEach(btn => {
-                if (!btn) return;
-                if (btn.innerText === 'Subscribe') {
-                    btn.innerText = 'Subscribed';
-                    btn.className = "bg-yt-card hover:bg-yt-hover border border-yt-border text-gray-300 text-xs sm:text-sm font-bold px-6 py-2.5 rounded-full transition-all";
-                } else {
-                    btn.innerText = 'Subscribe';
-                    btn.className = "bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-bold px-6 py-2.5 rounded-full shadow-lg shadow-red-600/30 transition-all";
-                }
-            });
         }
 
         function toggleSidebar() {
@@ -980,24 +1122,14 @@
             document.querySelectorAll('.sidebar-text').forEach(t => t.classList.toggle('hidden'));
         }
 
-        function toggleNotifications() {
-            document.getElementById('notifMenu').classList.toggle('hidden');
-            document.getElementById('notifBadge').classList.add('hidden');
-        }
-
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
         function openShareModal() { openModal('shareModal'); }
-        function copyShareUrl() {
-            const input = document.getElementById('shareUrlInput');
-            input.select();
-            document.execCommand('copy');
-            alert('Video URL copied to clipboard!');
-        }
 
-        // Initialize App on DOM Load
         window.addEventListener('DOMContentLoaded', () => {
+            renderAuthUI();
             renderHomeGrid();
+            updateChannelUI();
             lucide.createIcons();
         });
     </script>
